@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "./build/src",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "typeRoots": [
+      "./src/types"
+    ],
+    "rootDir": "src",
+    "experimentalDecorators": true
+  },
+  "compileOnSave": true,
+  "include": [
+    "./src/**/*",
+    "src/interfaces/.ts"
+  ],
+  "exclude": [
+    "node_module"
+  ],
+  "ts-node": {
+    "files": true
+  },
+}
