@@ -1,3 +1,8 @@
+import CategoryModel from "../models/category";
+import { Category } from "./category";
+import {
+  NonAttribute
+} from '@sequelize/core';
 
 export interface Product {
   readonly id?: number;
@@ -6,7 +11,7 @@ export interface Product {
   price: number;
   brand: string;
   unitType: string;
-  category: string;
+  category: number | Category | NonAttribute<CategoryModel>;
   partNumber: string;
   description?: string;
   active: boolean;
