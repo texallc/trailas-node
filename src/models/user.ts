@@ -3,13 +3,18 @@ import {
   DataTypes,
   InferAttributes,
   CreationOptional,
-  InferCreationAttributes
+  InferCreationAttributes,
+  NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, Unique } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany } from '@sequelize/core/decorators-legacy';
 import { IsEmail, Len } from '@sequelize/validator.js';
 import { User } from '../interfaces/users';
 import { isEmail, phoneLength, stringLargeLength, stringLength } from '../constants/constants';
+import InventoryModel from './inventory';
+import MovementModel from './movement';
 
+
+@Table({ tableName: 'users' })
 class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> implements Omit<User, "role"> {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
@@ -45,6 +50,12 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @Attribute(DataTypes.BOOLEAN)
   @Default(true)
   declare active: boolean;
+
+  @HasMany(() => InventoryModel, /* foreign key */ 'userId')
+  declare inventories?: NonAttribute<InventoryModel[]>;
+
+  @HasMany(() => MovementModel, /* foreign key */ 'userId')
+  declare movements?: NonAttribute<MovementModel[]>;
 }
 
 export default UserModel;

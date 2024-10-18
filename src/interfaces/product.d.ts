@@ -11,9 +11,10 @@ export interface Product {
   price: number;
   brand: string;
   unitType: string;
-  category: number | Category | NonAttribute<CategoryModel>;
   partNumber: string;
   description?: string;
   active: boolean;
   image?: string;
+  category: Category | NonAttribute<CategoryModel>;
+  categoryId: number;
 }

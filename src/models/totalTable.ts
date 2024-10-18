@@ -5,12 +5,14 @@ import {
   CreationOptional,
   InferCreationAttributes
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Table } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { TotalTables } from '../interfaces/totalTables';
 import { maxStock, minStock, stringLength } from '../constants/constants';
 
-class TotalTablesModel extends Model<InferAttributes<TotalTablesModel>, InferCreationAttributes<TotalTablesModel>> implements Omit<TotalTables, "">{
+
+@Table({ tableName: 'totalTables' })
+class TotalTablesModel extends Model<InferAttributes<TotalTablesModel>, InferCreationAttributes<TotalTablesModel>> implements TotalTables {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement

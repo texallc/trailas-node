@@ -6,12 +6,15 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, HasOne } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, BelongsTo, NotNull } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { Product } from '../interfaces/product';
 import { maxPrice, minPrice, stringLargeLength, stringLength } from '../constants/constants';
 import CategoryModel from './category';
+import InventoryModel from './inventory';
+import ProductInventoryModel from './productInventory';
 
+@Table({ tableName: 'products' })
 class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAttributes<ProductModel>> implements Product {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
@@ -47,12 +50,21 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @Default(true)
   declare active: boolean;
 
-  @HasOne(() => CategoryModel, /* foreign key */ 'id')
-  declare category: NonAttribute<CategoryModel> | number;
-
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
   declare unitType: string;
+
+  @BelongsTo(() => CategoryModel, 'categoryId')
+  declare category: NonAttribute<CategoryModel>;
+
+  @Attribute(DataTypes.INTEGER)
+  @NotNull
+  declare categoryId: number;
+
+  @BelongsToMany(() => InventoryModel, {
+    through: ProductInventoryModel,
+  })
+  declare inventories?: NonAttribute<InventoryModel[]>
 }
 
 export default ProductModel;

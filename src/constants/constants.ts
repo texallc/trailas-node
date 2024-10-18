@@ -57,4 +57,9 @@ export const minStock: Min = {
 export const roleLength: Length = {
   args: [8, 22],
   msg: "Los caracteres permitidos son inválidos."
+} as const
+
+export const typeMovementLength: Length = {
+  args: [6, 7],
+  msg: "Los caracteres permitidos son inválidos."
 } as const;

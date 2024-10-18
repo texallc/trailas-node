@@ -6,13 +6,14 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, HasMany, Table } from '@sequelize/core/decorators-legacy';
 import { Len } from '@sequelize/validator.js';
 import { Category } from '../interfaces/category';
 import { stringLargeLength, stringLength } from '../constants/constants';
 import ProductModel from './product';
 
-class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationAttributes<CategoryModel>> implements Omit<Category, "">{
+@Table({ tableName: 'categories' })
+class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationAttributes<CategoryModel>> implements Category {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
@@ -34,7 +35,7 @@ class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationA
   @Default(true)
   declare active: boolean;
 
-  @HasMany(() => ProductModel, /* foreign key */ 'category')
+  @HasMany(() => ProductModel, /* foreign key */ 'categoryId')
   declare products?: NonAttribute<ProductModel[]>;
 }
 

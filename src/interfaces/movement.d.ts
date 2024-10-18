@@ -1,10 +1,13 @@
+import UserModel from "../models/user";
 import { Inventory } from "./inventory";
 import { User } from "./users";
 
 export interface Movement {
   readonly id: number;
-  inventory: number | Inventory;
-  user: number | User;
   quantity: number;
   createdAt: Date;
+  inventory: Inventory | NonAttribute<InventoryModel>;
+  user: User | NonAttribute<UserModel>;
+  inventoryId: number;
+  userId: number;
 }
