@@ -1,43 +1,82 @@
-import tf, { Tensor3D } from "@tensorflow/tfjs-node";
-import nsfw from "nsfwjs";
 import { handleErrorFunction } from "./handleError";
 import sharp from "sharp";
+import { Op, WhereOptions } from "@sequelize/core";
 
-const earthRadius = 6371000;
+export const getClearWhere = <T extends {}>(where: WhereOptions<T>) => {
+	if (!where) return where;
 
-export const isPointInsideCircle = (pointLat: number, pointLng: number, circleLat: number, circleLng: number, circleRadius: number) => {
-	const pointLatRad = pointLat * Math.PI / 180;
-	const pointLngRad = pointLng * Math.PI / 180;
-	const circleLatRad = circleLat * Math.PI / 180;
-	const circleLngRad = circleLng * Math.PI / 180;
-	const distance = earthRadius * Math.acos(
-		Math.sin(circleLatRad) * Math.sin(pointLatRad) +
-		Math.cos(circleLatRad) * Math.cos(pointLatRad) *
-		Math.cos(pointLngRad - circleLngRad)
-	);
+	const allKeys = getAllTypeKeysObject(where);
 
-	return distance <= circleRadius;
-}
+	for (const key of allKeys) {
+		if (!where) break;
 
-export const checkSecureImage = async (base64: string) => {
-	try {
-		if (!base64) throw "No se ha encontrado la imagen.";
+		const k = key as keyof WhereOptions<T>;
+		const value = where[k];
 
-		const content = Buffer.from(base64, "base64");
-		const image = tf.node.decodeImage(content, 3) as Tensor3D;
+		if (!value) {
+			delete where[k];
+		}
 
-		const model = await nsfw.load();
-		const predictions = await model.classify(image as any);
+		if (typeof value === "object" && !Array.isArray(value)) {
+			const _allKeys = getAllTypeKeysObject(value);
 
-		image.dispose();
+			for (const _key of _allKeys) {
+				if (!value[_key]) delete value[_key];
+			}
 
-		const isSecure = !predictions.some(p => ["Hentai", "Porn", "Sexy"].includes(p.className) && p.probability >= 0.5);
+			const _allFilteredKeys = getAllTypeKeysObject(value);
 
-		if (!isSecure) throw "La imagen o las imagenes no son seguras.";
-	} catch (error) {
-		throw handleErrorFunction(error);
+			if (!_allFilteredKeys.length) {
+				delete where[k];
+			}
+		}
+
+		if (Array.isArray(value)) {
+			const array = value as number[] | string[] | WhereOptions<T>[];
+
+			if (!array.length) {
+				delete where[k];
+			}
+
+			const firstItemValue = array[0];
+
+			if (typeof firstItemValue !== "number" && typeof firstItemValue !== "string" && typeof key === "symbol") {
+				const _array = array as WhereOptions<T>[];
+
+				if (key === Op.or) {
+					const or: WhereOptions<T>[] = [];
+
+					for (let i = 0; i < _array.length; i++) {
+						let whereOr = _array[i];
+
+						whereOr = getClearWhere(whereOr);
+
+						const allKeysOr = getAllTypeKeysObject(whereOr!);
+
+						if (allKeysOr.length) {
+							or.push(whereOr);
+						}
+					}
+					if (or.length) {
+						where = { ...where, [key]: or } as WhereOptions<T>;
+					} else {
+						delete where[k];
+					}
+				}
+			}
+		}
 	}
-}
+
+	return where;
+};
+
+const getAllTypeKeysObject = <T extends {}>(obj: T) => {
+	const keys = Object.keys(obj);
+	const symbolKeys = Object.getOwnPropertySymbols(obj);
+	const allKeys = [...keys, ...symbolKeys];
+
+	return allKeys;
+};
 
 export const getExtensionByContentType = (contentType: string) => {
 	const extension = contentType.split("/")[1];
@@ -45,7 +84,7 @@ export const getExtensionByContentType = (contentType: string) => {
 	if (extension === "jpeg") return "jpg";
 
 	return extension;
-}
+};
 
 export const compreesImage = async (buffer: Buffer) => {
 	try {
@@ -56,15 +95,15 @@ export const compreesImage = async (buffer: Buffer) => {
 		const cropWidth = 320;
 		const cropHeight = 240;
 
-		if(width > cropWidth || height > cropHeight) {
-		  return await sharp(buffer).resize(320, 240).jpeg().toBuffer();
+		if (width > cropWidth || height > cropHeight) {
+			return await sharp(buffer).resize(320, 240).jpeg().toBuffer();
 		}
 
 		return await sharp(buffer).jpeg().toBuffer();
 	} catch (error) {
 		throw handleErrorFunction(error);
 	}
-}
+};
 
 export const fileToBuffer = async (blob: Blob) => {
 	try {
@@ -74,4 +113,4 @@ export const fileToBuffer = async (blob: Blob) => {
 	} catch (error) {
 		throw handleErrorFunction(error);
 	}
-}
+};
