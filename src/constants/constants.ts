@@ -10,8 +10,8 @@ export const phoneLength: Length = {
 } as const;
 
 export const stringLength: Length = {
-  args: [0, 300],
-  msg: "Los caracteres permitidos son de 3 a 300."
+  args: [0, 255],
+  msg: "Los caracteres permitidos son de 3 a 355."
 } as const;
 
 export const rfcLength: Length = {
@@ -56,5 +56,10 @@ export const minStock: Min = {
 
 export const roleLength: Length = {
   args: [8, 22],
+  msg: "Los caracteres permitidos son inválidos."
+} as const
+
+export const typeMovementLength: Length = {
+  args: [6, 7],
   msg: "Los caracteres permitidos son inválidos."
 } as const;

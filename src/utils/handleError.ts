@@ -12,12 +12,16 @@ export const handleErrorFunction = (error: unknown) => {
   }
 
   throw "Error en el servidor!";
-}
+};
 
 export const handleError = (res: Response, err: any) => {
   console.log(err);
 
-  return res.status(500).json(`${err.message ?? err}`)
+  if (err instanceof Error) return res.status(500).json(err.message);
+
+  if (typeof err === "string") return res.status(500).json(err);
+
+  return res.status(500).json(JSON.stringify(err));
 };
 
 export default handleError;

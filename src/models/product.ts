@@ -3,13 +3,18 @@ import {
   DataTypes,
   InferAttributes,
   CreationOptional,
-  InferCreationAttributes
+  InferCreationAttributes,
+  NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, BelongsTo, NotNull } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { Product } from '../interfaces/product';
 import { maxPrice, minPrice, stringLargeLength, stringLength } from '../constants/constants';
+import CategoryModel from './category';
+import InventoryModel from './inventory';
+import ProductInventoryModel from './productInventory';
 
+@Table({ tableName: 'products' })
 class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAttributes<ProductModel>> implements Product {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
@@ -20,7 +25,7 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @Len(stringLength)
   declare name: string;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
   declare description: string;
 
@@ -46,10 +51,22 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   declare active: boolean;
 
   @Attribute(DataTypes.STRING)
-  declare category: string;
-
-  @Attribute(DataTypes.STRING)
+  @Len(stringLength)
   declare unitType: string;
+
+  @BelongsTo(() => CategoryModel, 'categoryId')
+  declare category: NonAttribute<CategoryModel>;
+
+  @Attribute(DataTypes.INTEGER)
+  @NotNull
+  declare categoryId: number;
+
+  @BelongsToMany(() => InventoryModel, {
+    through: ProductInventoryModel,
+    foreignKey: 'productId',
+    otherKey: 'inventoryId'
+  })
+  declare inventories?: NonAttribute<InventoryModel[]>;
 }
 
 export default ProductModel;
