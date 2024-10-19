@@ -23,7 +23,7 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @AutoIncrement
   declare id: CreationOptional<number>;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
   declare description: string;
 
@@ -48,8 +48,10 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
 
   @BelongsToMany(() => ProductModel, {
     through: ProductInventoryModel,
+    foreignKey: 'inventoryId',
+    otherKey: 'productId'
   })
-  declare products: NonAttribute<ProductModel[]>
+  declare products: NonAttribute<ProductModel[]>;
 
   @BelongsTo(() => UserModel, 'userId')
   declare user: NonAttribute<UserModel>;
@@ -58,7 +60,7 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @NotNull
   declare userId: number;
 
-  @HasMany(() => MovementModel, /* foreign key */ 'inventoryId')
+  @HasMany(() => MovementModel, 'inventoryId')
   declare movements?: NonAttribute<MovementModel[]>;
 }
 

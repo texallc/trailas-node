@@ -1,15 +1,16 @@
 import { Application, Router } from "express";
-import UserModel from "../models/user";
+import { paginatedList } from "../controllers/user";
 
 const router = Router();
 
-const RouteUserModel = (app: Application) => {
-  router.get('/list', UserModel);
-  router.post('/create', UserModel);
-  router.put('/update', UserModel);
-  router.delete('/delete', UserModel);
+const RouteUser = (app: Application) => {
+  router.get('/paginated-list', paginatedList);
+  router.post('/create');
+  router.put('/update');
+  router.delete('/delete');
 
   app.use("/users", router);
-}
+};
 
-export default RouteUserModel;
+export default RouteUser;
+

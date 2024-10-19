@@ -1,15 +1,14 @@
 import { Application, Router } from "express";
-import MovementModel from "../models/movement";
 
 const router = Router();
 
-const RouteMovementModel = (app: Application) => {
-  router.get('/list', MovementModel);
-  router.post('/create', MovementModel);
-  router.put('/update', MovementModel);
-  router.delete('/delete', MovementModel);
+const RouteMovement = (app: Application) => {
+  router.get('/list');
+  router.post('/create');
+  router.put('/update');
+  router.delete('/delete');
 
   app.use("/movements", router);
-}
+};
 
-export default RouteMovementModel;
+export default RouteMovement;

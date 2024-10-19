@@ -8,14 +8,14 @@ import {
 } from '@sequelize/core';
 import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany } from '@sequelize/core/decorators-legacy';
 import { IsEmail, Len } from '@sequelize/validator.js';
-import { User } from '../interfaces/users';
+import { User } from '../interfaces/user';
 import { isEmail, phoneLength, stringLargeLength, stringLength } from '../constants/constants';
 import InventoryModel from './inventory';
 import MovementModel from './movement';
-
+import { Roles } from "../types";
 
 @Table({ tableName: 'users' })
-class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> implements Omit<User, "role"> {
+class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> implements User {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
@@ -39,7 +39,7 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @Len(phoneLength)
   declare phone: number;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
   declare description: string;
 
@@ -51,10 +51,14 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @Default(true)
   declare active: boolean;
 
-  @HasMany(() => InventoryModel, /* foreign key */ 'userId')
+  @Attribute(DataTypes.STRING)
+  @Len(stringLength)
+  declare role: Roles;
+
+  @HasMany(() => InventoryModel, 'userId')
   declare inventories?: NonAttribute<InventoryModel[]>;
 
-  @HasMany(() => MovementModel, /* foreign key */ 'userId')
+  @HasMany(() => MovementModel, 'userId')
   declare movements?: NonAttribute<MovementModel[]>;
 }
 

@@ -1,15 +1,14 @@
 import { Application, Router } from "express";
-import InventoryModel from "../models/inventory";
 
 const router = Router();
 
-const RouteInventoryModel = (app: Application) => {
-  router.get('/list', InventoryModel);
-  router.post('/create', InventoryModel);
-  router.put('/update', InventoryModel);
-  router.delete('/delete', InventoryModel);
+const RouteInventory = (app: Application) => {
+  router.get('/list');
+  router.post('/create');
+  router.put('/update');
+  router.delete('/delete');
 
   app.use("/inventories", router);
-}
+};
 
-export default RouteInventoryModel;
+export default RouteInventory;

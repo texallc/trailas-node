@@ -1,15 +1,14 @@
 import { Application, Router } from "express";
-import CategoryModel from "../models/category";
 
 const router = Router();
 
-const RouteCategoryModel = (app: Application) => {
-  router.get('/list', CategoryModel);
-  router.post('/create', CategoryModel);
-  router.put('/update', CategoryModel);
-  router.delete('/delete', CategoryModel);
+const RouteCategory = (app: Application) => {
+  router.get('/list');
+  router.post('/create');
+  router.put('/update');
+  router.delete('/delete');
 
   app.use("/categories", router);
-}
+};
 
-export default RouteCategoryModel;
+export default RouteCategory;

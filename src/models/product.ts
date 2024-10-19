@@ -25,7 +25,7 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @Len(stringLength)
   declare name: string;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
   declare description: string;
 
@@ -63,8 +63,10 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
 
   @BelongsToMany(() => InventoryModel, {
     through: ProductInventoryModel,
+    foreignKey: 'productId',
+    otherKey: 'inventoryId'
   })
-  declare inventories?: NonAttribute<InventoryModel[]>
+  declare inventories?: NonAttribute<InventoryModel[]>;
 }
 
 export default ProductModel;

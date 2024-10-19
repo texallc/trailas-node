@@ -6,6 +6,7 @@ import { RequestHandler } from "express";
 // import ProductInventory from "../models/productInventory";
 // import UserModel from "../models/user";
 import sequelize from "../sequelize";
+import handleError from "../utils/handleError";
 
 export const syncModels: RequestHandler = async (req, res) => {
   try {
@@ -21,8 +22,6 @@ export const syncModels: RequestHandler = async (req, res) => {
 
     res.status(200).json({ message: "All models were synchronized successfully." });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "An error occurred while synchronizing the models." });
+    handleError(res, error);
   }
-
 };

@@ -23,7 +23,7 @@ class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationA
   @Len(stringLength)
   declare name: string;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
   declare description: string;
 

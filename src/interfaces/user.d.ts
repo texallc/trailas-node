@@ -12,6 +12,7 @@ export interface User {
   password?: string;
   rfc?: string;
   phone?: number;
+  role: Roles;
 }
 
 export interface UserAdmin extends User {
