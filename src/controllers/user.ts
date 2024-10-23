@@ -1,11 +1,11 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
 import { paginatedListService } from "../services/user";
-import { getClearStringQuery } from "../utils/functions";
+import { getClearQueryString } from "../utils/functions";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const { page, limit } = getClearStringQuery(req.query);
+    const { page, limit } = getClearQueryString(req.query);
 
     const { list, total } = await paginatedListService({ page: +page, limit: +limit });
 

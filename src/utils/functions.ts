@@ -39,7 +39,7 @@ export const fileToBuffer = async (blob: Blob) => {
 	}
 };
 
-export const getClearStringQuery = (query: ParsedQs) => {
+export const getClearQueryString = (query: ParsedQs) => {
 	const queryString: Record<string, string> = {};
 	const entries = Object.entries(query);
 
