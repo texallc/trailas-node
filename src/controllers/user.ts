@@ -1,15 +1,11 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
 import { paginatedListService } from "../services/user";
+import { getClearStringQuery } from "../utils/functions";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const { page, limit } = req.query;
-
-    //meter logica en funcion
-    if (!page || typeof page !== "string") throw new Error("Formato de pagina incorrecto");
-
-    if (!limit || typeof limit !== "string") throw new Error("Formato de limite incorrecto");
+    const { page, limit } = getClearStringQuery(req.query);
 
     const { list, total } = await paginatedListService({ page: +page, limit: +limit });
 
