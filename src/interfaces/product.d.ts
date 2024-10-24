@@ -12,9 +12,10 @@ export interface Product {
   brand: string;
   unitType: string;
   partNumber: string;
-  description?: string;
+  description: string;
   active: boolean;
-  image?: string;
+  image: string;
   category: Category | NonAttribute<CategoryModel>;
   categoryId: number;
+  stock?: number;
 }

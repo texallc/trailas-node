@@ -1,14 +1,17 @@
 import { Response } from "express";
+import { User } from "../interfaces/user";
 
 export { };
 
-/* declare global {
-  var user: Users | undefined;
-}; */
+declare global {
+  var user: User | undefined;
+};
 
 export type Roles = "SuperAdministrador" | "Administrador" | "Comprador";
 
 export type TypeMovement = "Entrada" | "Salida";
+
+export type TableNames = "products" | "users" | "inventories" | "movements" | "categories";
 
 export type NewModelFunction<T> = ((model: T) => T) | null;
 

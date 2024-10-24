@@ -1,5 +1,5 @@
 import { FindAttributeOptions } from "@sequelize/core";
-import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel } from "../interfaces/repositories";
+import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel, PropsIncrementModel } from "../interfaces/repositories";
 import { MakeNullishOptional } from "@sequelize/core/_non-semver-use-at-your-own-risk_/utils/types.js";
 import sequelize from "../sequelize";
 
@@ -23,7 +23,7 @@ export const findAllModel = <T>({ model, where, include, attributes, order, limi
   limit
 });
 
-export const bulkCreate = async <T extends object>({ model, data, updateOnDuplicate, transaction }: PropsBulkCreate<T>) => {
+export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate, transaction }: PropsBulkCreate<T>) => {
   const t = transaction || await sequelize.startUnmanagedTransaction();
 
   try {
@@ -45,5 +45,7 @@ export const bulkCreate = async <T extends object>({ model, data, updateOnDuplic
     throw error;
   }
 };
+
+export const incrementModel = <T extends {}>({ model, key, where, transaction, by }: PropsIncrementModel<T>) => model.increment(key, { by, where, transaction });
 
 export const deleteModel = <T extends {}>({ model, where, transaction }: PropsDeleteModel<T>) => model.destroy({ where, transaction });

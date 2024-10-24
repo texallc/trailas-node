@@ -1,13 +1,12 @@
+import { TotalTables } from "../interfaces/totalTables";
 import { PaginatedListServiceProps } from "../interfaces/userService";
 import TotalTablesModel from "../models/totalTable";
 import { createModel, findAllModel, findOneModel } from "../repositories";
-import UserModel from "../models/user";
-import { User } from "../interfaces/user";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
     const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: UserModel, page, limit });
+    const listPromise = findAllModel({ model: TotalTablesModel, page, limit });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
 
@@ -17,11 +16,11 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
   }
 };
 
-export const createUserService = (user: User) =>
-  createModel({ model: UserModel, data: user })
+export const createTotalTablesService = (totalTables: TotalTables) =>
+  createModel({ model: TotalTablesModel, data: totalTables })
 
-export const updateUserService = (user: User) =>
-  createModel({ model: UserModel, data: user })
+export const updateTotalTablesService = (totalTables: Partial<TotalTables>) =>
+  createModel({ model: TotalTablesModel, data: totalTables })
 
-export const updateStatusUserService = (id: number, active: boolean) =>
-  createModel({ model: UserModel, data: { id, active } })
+export const updateStatusTotalTablesService = (id: number, active: boolean) =>
+  createModel({ model: TotalTablesModel, data: { id, active } })

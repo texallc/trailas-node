@@ -43,3 +43,11 @@ export interface PropsDeleteModel<T> {
   where: WhereOptions<T>;
   transaction?: Transaction;
 };
+
+export interface PropsIncrementModel<T> {
+  model: ModelStatic<Model<T, T>>;
+  key: keyof T;
+  where: WhereOptions<T>;
+  transaction?: Transaction;
+  by?: number;
+}

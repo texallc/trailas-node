@@ -8,10 +8,11 @@ import {
 } from '@sequelize/core';
 import { Attribute, PrimaryKey, AutoIncrement, Table, BelongsTo, NotNull } from '@sequelize/core/decorators-legacy';
 import { Movement } from '../interfaces/movement';
-import { maxStock, minStock } from '../constants/constants';
-import { Max, Min } from '@sequelize/validator.js';
+import { maxStock, minStock, typeMovementLength } from '../constants/constants';
+import { Len, Max, Min } from '@sequelize/validator.js';
 import InventoryModel from './inventory';
 import UserModel from './user';
+import { TypeMovement } from '../types';
 
 @Table({ tableName: 'movements' })
 class MovementModel extends Model<InferAttributes<MovementModel>, InferCreationAttributes<MovementModel>> implements Movement {
@@ -24,9 +25,6 @@ class MovementModel extends Model<InferAttributes<MovementModel>, InferCreationA
   @Max(maxStock)
   @Min(minStock)
   declare quantity: number;
-
-  @Attribute(DataTypes.DATE)
-  declare createdAt: Date;
 
   @BelongsTo(() => InventoryModel, 'inventoryId')
   declare inventory: NonAttribute<InventoryModel>;
@@ -41,6 +39,10 @@ class MovementModel extends Model<InferAttributes<MovementModel>, InferCreationA
   @Attribute(DataTypes.INTEGER)
   @NotNull
   declare userId: number;
+
+  @Attribute(DataTypes.STRING)
+  @Len(typeMovementLength)
+  declare typeMovement: TypeMovement;
 }
 
 export default MovementModel;
