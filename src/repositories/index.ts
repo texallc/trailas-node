@@ -2,8 +2,27 @@ import { FindAttributeOptions } from "@sequelize/core";
 import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel, PropsIncrementModel } from "../interfaces/repositories";
 import { MakeNullishOptional } from "@sequelize/core/_non-semver-use-at-your-own-risk_/utils/types.js";
 import sequelize from "../sequelize";
+import TotalTablesModel from "../models/totalTable";
 
 export const createModel = <T extends {}>({ model, data, transaction }: PropsCreateModel<T>) => model.create(data, { transaction });
+
+export const incrementModel = ({ where, transaction, by }: PropsIncrementModel) => TotalTablesModel.increment("total", { where, by, transaction });
+
+export const createIncrementModel = async <T extends {}>({ model, data, where, transaction }: Omit<PropsIncrementModel, "by"> & PropsCreateModel<T>) => {
+  const t = transaction || await sequelize.startUnmanagedTransaction();
+
+  try {
+    const createModelPromise = createModel({ model, data, transaction: t });
+    const incrementModelPromise = incrementModel({ where, transaction: t });
+
+    const [newModel] = await Promise.all([createModelPromise, incrementModelPromise])
+    return newModel;
+  }
+  catch (error) {
+    t.rollback();
+    throw error;
+  }
+}
 
 export const updateModel = <T extends {}>({ model, data, where, transaction }: PropsUpdateModel<T>) => model.update(data, { where, transaction });
 
@@ -45,7 +64,5 @@ export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate,
     throw error;
   }
 };
-
-export const incrementModel = <T extends {}>({ model, key, where, transaction, by }: PropsIncrementModel<T>) => model.increment(key, { by, where, transaction });
 
 export const deleteModel = <T extends {}>({ model, where, transaction }: PropsDeleteModel<T>) => model.destroy({ where, transaction });

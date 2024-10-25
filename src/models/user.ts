@@ -9,7 +9,7 @@ import {
 import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany } from '@sequelize/core/decorators-legacy';
 import { IsEmail, Len } from '@sequelize/validator.js';
 import { User } from '../interfaces/user';
-import { isEmail, phoneLength, stringLargeLength, stringLength } from '../constants/constants';
+import { isEmail, phoneLength, rfcLength, stringLargeLength, stringLength } from '../constants/constants';
 import InventoryModel from './inventory';
 import MovementModel from './movement';
 import { Roles } from "../types";
@@ -19,7 +19,7 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
-  declare id: CreationOptional<number>;
+  declare id?: CreationOptional<number>;
 
   @Attribute(DataTypes.STRING)
   @Unique
@@ -60,6 +60,10 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @HasMany(() => MovementModel, 'userId')
   declare movements?: NonAttribute<MovementModel[]>;
+
+  @Attribute(DataTypes.STRING)
+  @Len(rfcLength)
+  declare rfc: string;
 }
 
 export default UserModel;

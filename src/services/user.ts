@@ -1,6 +1,6 @@
 import { PaginatedListServiceProps } from "../interfaces/userService";
 import TotalTablesModel from "../models/totalTable";
-import { createModel, findAllModel, findOneModel } from "../repositories";
+import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
 import UserModel from "../models/user";
 import { User } from "../interfaces/user";
 
@@ -18,10 +18,14 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
 };
 
 export const createUserService = (user: User) =>
-  createModel({ model: UserModel, data: user })
+  createIncrementModel({
+    model: UserModel,
+    data: user,
+    where: { tableName: "users" },
+  });
 
 export const updateUserService = (user: User) =>
-  createModel({ model: UserModel, data: user })
+  updateModel({ model: UserModel, data: user, where: { id: user.id } });
 
 export const updateStatusUserService = (id: number, active: boolean) =>
-  createModel({ model: UserModel, data: { id, active } })
+  updateModel({ model: UserModel, data: { id, active }, where: { id } });

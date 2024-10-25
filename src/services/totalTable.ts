@@ -1,7 +1,7 @@
 import { TotalTables } from "../interfaces/totalTables";
 import { PaginatedListServiceProps } from "../interfaces/userService";
 import TotalTablesModel from "../models/totalTable";
-import { createModel, findAllModel, findOneModel } from "../repositories";
+import { createModel, findAllModel, findOneModel, updateModel } from "../repositories";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
@@ -20,7 +20,4 @@ export const createTotalTablesService = (totalTables: TotalTables) =>
   createModel({ model: TotalTablesModel, data: totalTables })
 
 export const updateTotalTablesService = (totalTables: Partial<TotalTables>) =>
-  createModel({ model: TotalTablesModel, data: totalTables })
-
-export const updateStatusTotalTablesService = (id: number, active: boolean) =>
-  createModel({ model: TotalTablesModel, data: { id, active } })
+  updateModel({ model: TotalTablesModel, data: totalTables, where: { id: totalTables.id } })

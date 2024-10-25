@@ -6,7 +6,7 @@ import { Product } from "./product";
 import { User } from "./user";
 
 export interface Movement {
-  readonly id: number;
+  readonly id?: number;
   quantity: number;
   createdAt?: Date;
   inventory?: Inventory | NonAttribute<InventoryModel>;

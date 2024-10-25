@@ -20,7 +20,7 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
-  declare id: CreationOptional<number>;
+  declare id?: CreationOptional<number>;
 
   @Attribute(DataTypes.INTEGER)
   @Max(maxStock)

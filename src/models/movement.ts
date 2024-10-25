@@ -19,7 +19,7 @@ class MovementModel extends Model<InferAttributes<MovementModel>, InferCreationA
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
-  declare id: CreationOptional<number>;
+  declare id?: CreationOptional<number>;
 
   @Attribute(DataTypes.INTEGER)
   @Max(maxStock)

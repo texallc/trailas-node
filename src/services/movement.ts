@@ -2,9 +2,7 @@ import { Movement } from "../interfaces/movement";
 import { PaginatedListServiceProps } from "../interfaces/userService";
 import MovementModel from "../models/movement";
 import TotalTablesModel from "../models/totalTable";
-import { createModel, findAllModel, findOneModel, incrementModel, updateModel } from "../repositories";
-import sequelize from "../sequelize";
-import { handleErrorFunction } from "../utils/handleError";
+import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
@@ -19,19 +17,12 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
   }
 };
 
-export const createMovementService = async (movement: Movement) => {
-  const transaction = await sequelize.startUnmanagedTransaction();
-
-  try {
-    const movementPromise = createModel({ model: MovementModel, data: { ...movement, id: 0 }, transaction })
-    const totalTablesPromise = incrementModel({ model: TotalTablesModel, where: { tableName: "movements" }, key: "total", transaction })
-
-    await Promise.all([movementPromise, totalTablesPromise])
-  } catch (error) {
-    transaction.rollback();
-    throw handleErrorFunction(error);
-  }
-}
+export const createMovementService = async (movement: Movement) =>
+  createIncrementModel({
+    model: MovementModel,
+    data: movement,
+    where: { tableName: "movements" },
+  })
 
 export const updateMovementService = (movement: Partial<Movement>) =>
   updateModel({ model: MovementModel, data: movement, where: { id: movement.id } })
