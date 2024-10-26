@@ -62,9 +62,7 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @HasMany(() => MovementModel, 'userId')
   declare movements?: NonAttribute<MovementModel[]>;
 
-  @HasMany(() => SaleModel, {
-    foreignKey: 'sellerId',
-  })
+  @HasMany(() => SaleModel, 'buyerId')
   declare salesSeller?: NonAttribute<SaleModel[]>;
 
   @HasMany(() => SaleModel, 'buyerId')

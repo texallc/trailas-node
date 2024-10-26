@@ -33,17 +33,17 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
   @Attribute(DataTypes.DECIMAL)
   declare saleTax: number;
 
-  @Attribute(DataTypes.INTEGER)
-  declare buyerId: number;
-
   @BelongsTo(() => UserModel, 'buyerId')
   declare buyer: NonAttribute<UserModel>;
 
   @Attribute(DataTypes.INTEGER)
-  declare sellerId: number;
+  declare buyerId: number;
 
   @BelongsTo(() => UserModel, 'sellerId')
   declare seller: NonAttribute<UserModel>;
+
+  @Attribute(DataTypes.INTEGER)
+  declare sellerId: number;
 
   @HasMany(() => SaleDetailsModel, /* foreign key */ 'saleId')
   declare details?: NonAttribute<SaleDetailsModel[]>;
