@@ -1,10 +1,11 @@
 import { Response } from "express";
+import { User } from "../interfaces/user";
 
 export { };
 
-/* declare global {
-  var user: Users | undefined;
-}; */
+declare global {
+  var user: User | undefined;
+};
 
 export type Roles = "SuperAdministrador" | "Administrador" | "Comprador";
 

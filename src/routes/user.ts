@@ -1,10 +1,11 @@
 import { Application, Router } from "express";
 import { paginatedList } from "../controllers/user";
+import isAuthenticated from "../middlewares/auth";
 
 const router = Router();
 
 const RouteUser = (app: Application) => {
-  router.get('/paginated-list', paginatedList);
+  router.get('/paginated-list', isAuthenticated, paginatedList);
   router.post('/create');
   router.put('/update');
   router.delete('/delete');
