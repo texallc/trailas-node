@@ -3,8 +3,8 @@ import ProductModel from "../models/product";
 export interface SaleDetails {
   readonly id?: number;
   quantity: number;
-  sale_id: number;
+  saleId: number;
   sale: Sale | NonAttribute<SaleModel>;
-  product_id: number;
+  productId: number;
   product: Product | NonAttribute<ProductModel>;
 }

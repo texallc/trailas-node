@@ -31,21 +31,21 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
   declare subtotal: number;
 
   @Attribute(DataTypes.DECIMAL)
-  declare sale_tax: number;
+  declare saleTax: number;
 
   @Attribute(DataTypes.INTEGER)
-  declare buyer_id: number;
+  declare buyerId: number;
 
-  @BelongsTo(() => UserModel, 'buyer_id')
+  @BelongsTo(() => UserModel, 'buyerId')
   declare buyer: NonAttribute<UserModel>;
 
   @Attribute(DataTypes.INTEGER)
-  declare seller_id: number;
+  declare sellerId: number;
 
-  @BelongsTo(() => UserModel, 'seller_id')
+  @BelongsTo(() => UserModel, 'sellerId')
   declare seller: NonAttribute<UserModel>;
 
-  @HasMany(() => SaleDetailsModel, /* foreign key */ 'sale_id')
+  @HasMany(() => SaleDetailsModel, /* foreign key */ 'saleId')
   declare details?: NonAttribute<SaleDetailsModel[]>;
 
 }

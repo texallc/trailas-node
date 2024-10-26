@@ -4,10 +4,10 @@ export interface Sale {
   readonly id?: number;
   total: number;
   subtotal: number;
-  sale_tax: number;
-  buyer_id: number;
+  saleTax: number;
+  buyerId: number;
   buyer: User | NonAttribute<UserModel>;
-  seller_id: number;
+  sellerId: number;
   seller: User | NonAttribute<UserModel>;
   details?: SaleDetails[] | NonAttribute<SaleDetailsModel[]>;
 }

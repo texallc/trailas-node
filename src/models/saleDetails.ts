@@ -22,15 +22,15 @@ class SaleDetailsModel extends Model<InferAttributes<SaleDetailsModel>, InferCre
   declare quantity: number;
 
   @Attribute(DataTypes.INTEGER)
-  declare sale_id: number;
+  declare saleId: number;
 
-  @BelongsTo(() => SaleModel, 'sale_id')
+  @BelongsTo(() => SaleModel, 'saleId')
   declare sale: NonAttribute<SaleModel>;
 
   @Attribute(DataTypes.INTEGER)
-  declare product_id: number;
+  declare productId: number;
 
-  @BelongsTo(() => ProductModel, 'product_id')
+  @BelongsTo(() => ProductModel, 'productId')
   declare product: NonAttribute<ProductModel>;
 }
 

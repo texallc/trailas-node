@@ -7,6 +7,8 @@ import ProductModel from "../models/product";
 import ProductInventory from "../models/productInventory";
 import UserModel from "../models/user";
 import TotalTablesModel from "../models/totalTable";
+import SaleModel from '../models/sale';
+import SaleDetailsModel from '../models/saleDetails';
 
 const port = Number(process.env.DB_PORT || 5432);
 const password = process.env.DB_PASSWORD || '';
@@ -19,7 +21,7 @@ const sequelize = new Sequelize({
   host: 'localhost',
   port,
 
-  models: [CategoryModel, ProductModel, InventoryModel, ProductInventory, MovementModel, UserModel, TotalTablesModel],
+  models: [CategoryModel, ProductModel, InventoryModel, ProductInventory, MovementModel, UserModel, TotalTablesModel, SaleModel, SaleDetailsModel],
 });
 
 export default sequelize;

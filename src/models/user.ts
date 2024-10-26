@@ -13,6 +13,7 @@ import { isEmail, phoneLength, rfcLength, stringLargeLength, stringLength } from
 import InventoryModel from './inventory';
 import MovementModel from './movement';
 import { Roles } from "../types";
+import SaleModel from './sale';
 
 @Table({ tableName: 'users' })
 class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> implements User {
@@ -60,6 +61,14 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @HasMany(() => MovementModel, 'userId')
   declare movements?: NonAttribute<MovementModel[]>;
+
+  @HasMany(() => SaleModel, {
+    foreignKey: 'sellerId',
+  })
+  declare salesSeller?: NonAttribute<SaleModel[]>;
+
+  @HasMany(() => SaleModel, 'buyerId')
+  declare salesBuyer?: NonAttribute<SaleModel[]>;
 
   @Attribute(DataTypes.STRING)
   @Len(rfcLength)
