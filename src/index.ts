@@ -21,8 +21,8 @@ try {
    }
  */
 
-  const expressServer = app.listen(server.PORT, server.HOST, () => {
-    console.log(`App listening server on http://${server.HOST}:${server.PORT}`);
+  const expressServer = app.listen(server.PORT, () => {
+    console.log(`App listening server on port ${server.PORT}`);
   });
 
   expressServer.on("error", error => {

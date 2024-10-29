@@ -1,3 +1,4 @@
+
 import { Movement } from "../interfaces/movement";
 import { Product } from "../interfaces/product";
 import { Sale } from "../interfaces/sale";
@@ -80,9 +81,7 @@ export const createSaleService = async (sale: Sale) => {
 
     await Promise.all([createSaleDetailsPromise, createMovementaPromise])
     await transaction.commit()
-
   } catch (error) {
     throw handleErrorFunction(error);
   }
 };
-

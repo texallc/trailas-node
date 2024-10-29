@@ -7,7 +7,7 @@ declare global {
   var user: User | undefined;
 };
 
-export type Roles = "Super Admin" | "Administrador de Sucursal" | "Comprador" | "Vendedor";
+export type Roles = "Super Admin" | "Administrador de Sucursal" | "Vendedor" | "Comprador";
 
 export type TypeMovement = "Entrada" | "Salida";
 

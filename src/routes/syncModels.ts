@@ -7,6 +7,6 @@ const RouteSyncModels = (app: Application) => {
   router.get('/', syncModels);
 
   app.use("/sync-models", router);
-}
+};
 
 export default RouteSyncModels;

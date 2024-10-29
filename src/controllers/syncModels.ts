@@ -10,7 +10,7 @@ import handleError from "../utils/handleError";
 
 export const syncModels: RequestHandler = async (req, res) => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     // await MovementModel.sync();
     // await CategoryModel.sync();
     // await UserModel.sync();
