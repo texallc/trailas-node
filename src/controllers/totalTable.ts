@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
 import { getClearQueryString } from "../utils/functions";
-import { createTotalTablesService, paginatedListService, updateStatusTotalTablesService, updateTotalTablesService } from "../services/totalTable";
+import { createTotalTablesService, paginatedListService, updateTotalTablesService } from "../services/totalTable";
 import { TotalTables } from "../interfaces/totalTables";
 
 export const paginatedList: RequestHandler = async (req, res) => {

@@ -10,15 +10,18 @@ import TotalTablesModel from "../models/totalTable";
 import SaleModel from '../models/sale';
 import SaleDetailsModel from '../models/saleDetails';
 
+const username = process.env.DB_USERNAME;
+const password = process.env.DB_PASSWORD;
+const database = process.env.DB_NAME;
+const host = process.env.DB_HOST;
 const port = Number(process.env.DB_PORT || 5432);
-const password = process.env.DB_PASSWORD || '';
 
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
-  database: 'trailas',
-  user: 'postgres',
+  user: username,
   password,
-  host: 'localhost',
+  database,
+  host,
   port,
 
   models: [CategoryModel, ProductModel, InventoryModel, ProductInventory, MovementModel, UserModel, TotalTablesModel, SaleModel, SaleDetailsModel],
