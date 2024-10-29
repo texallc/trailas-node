@@ -19,15 +19,16 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
 };
 
 export const createSaleService = async (sale: Sale) => {
-  const userId = global.user?.id!
+  const userId = global.user?.id!;
 
   try {
     const createSalePromise = createIncrementModel({
       model: SaleModel,
-      data: sale,
+      data: { ...sale, sellerId: userId },
       where: { tableName: "sales" }
-    })
+    });
 
+    await Promise.all([createSalePromise]);
   } catch (error) {
     throw handleErrorFunction(error);
   }
