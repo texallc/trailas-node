@@ -5,23 +5,23 @@ export const unauthorized = (res: Response) => res.status(401).json({ message: '
 export const handleErrorFunction = (error: unknown) => {
   console.log(error);
 
-  if (typeof error === "string") throw error;
+  if (typeof error === "string") throw new Error(error);
 
   if (error instanceof Error) {
-    throw error.message;
+    throw error;
   }
 
-  throw "Error en el servidor!";
+  throw new Error("Error en el servidor!");
 };
 
-export const handleError = (res: Response, err: any) => {
-  console.log(err);
+export const handleError = (res: Response, error: any) => {
+  console.log(error);
 
-  if (err instanceof Error) return res.status(500).json(err.message);
+  if (error instanceof Error) return res.status(500).json({ error: error.message });
 
-  if (typeof err === "string") return res.status(500).json(err);
+  if (typeof error === "string") return res.status(500).json({ error });
 
-  return res.status(500).json(JSON.stringify(err));
+  return res.status(500).json({ error: JSON.stringify(error) });
 };
 
 export default handleError;
