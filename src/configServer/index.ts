@@ -7,7 +7,6 @@ dotenv.config();
 
 export const server = Object.freeze({
   NODE_ENV: process.env.NODE_ENV || 'development',
-  HOST: process.env.HOST || 'localhost',
   PORT: Number(process.env.PORT)
 });
 
@@ -25,6 +24,6 @@ const configServer = (app: Application) => {
   app.use(json({ limit: '50mb' }));
   app.use(cors({ origin: true }));
   app.use(s(path.join(new URL(import.meta.url).pathname, 'public')));
-}
+};
 
 export default configServer;
