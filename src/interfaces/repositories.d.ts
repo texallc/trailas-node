@@ -47,7 +47,7 @@ export interface PropsDeleteModel<T> {
 };
 
 export interface PropsIncrementModel {
-  where: WhereOptions<TotalTablesModel>;
+  where: Partial<TotalTables>;
   transaction?: Transaction;
   by?: number;
 }
