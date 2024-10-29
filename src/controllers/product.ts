@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
-import { createUserService, paginatedListService, updateStatusUserService, updateUserService } from "../services/user";
 import { getClearQueryString } from "../utils/functions";
-import { User } from "../interfaces/user";
+import { createProductService, paginatedListService, updateProductService } from "../services/product";
+import { Product } from "../interfaces/product";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
@@ -18,11 +18,11 @@ export const paginatedList: RequestHandler = async (req, res) => {
 
 export const create: RequestHandler = async (req, res) => {
   try {
-    const body = req.body as User;
+    const body = req.body as Product;
 
-    const user = await createUserService(body);
+    const product = await createProductService(body);
 
-    res.status(201).json(user);
+    res.status(201).json(product);
   } catch (error) {
     handleError(res, error);
   }
@@ -30,24 +30,12 @@ export const create: RequestHandler = async (req, res) => {
 
 export const update: RequestHandler = async (req, res) => {
   try {
-    const body = req.body as User;
+    const body = req.body as Partial<Product>;
 
-    const user = await updateUserService(body);
+    const product = await updateProductService(body);
 
-    res.status(200).json(user);
+    res.status(200).json(product);
   } catch (error) {
     handleError(res, error);
   }
 };
-
-export const disable: RequestHandler = async (req, res) => {
-  try {
-    const { id, active } = req.body as { id: number, active: boolean };
-
-    await updateStatusUserService(id, active);
-
-    res.status(204).end();
-  } catch (error) {
-    handleError(res, error);
-  }
-}
