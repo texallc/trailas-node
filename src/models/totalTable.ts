@@ -9,6 +9,7 @@ import { Attribute, PrimaryKey, AutoIncrement, Table, Unique } from '@sequelize/
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { TotalTables } from '../interfaces/totalTables';
 import { maxStock, minStock, stringLength } from '../constants/constants';
+import { TableNames } from '../types';
 
 
 @Table({ tableName: 'totalTables' })
@@ -19,9 +20,9 @@ class TotalTablesModel extends Model<InferAttributes<TotalTablesModel>, InferCre
   declare id: CreationOptional<number>;
 
   @Attribute(DataTypes.STRING)
-  @Len(stringLength)
   @Unique
-  declare tableName: string;
+  @Len(stringLength)
+  declare tableName: TableNames;
 
   @Attribute(DataTypes.INTEGER)
   @Max(maxStock)

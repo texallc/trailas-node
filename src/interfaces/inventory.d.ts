@@ -7,12 +7,11 @@ import { UserBranchOffice } from "./userBranchOffice";
 
 export interface Inventory {
   readonly id?: number;
-  typeMovement: TypeMovement;
-  description: string;
   stock: number;
   active: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   products: Product[] | NonAttribute<ProductModel[]>;
-  user: number | User | NonAttribute<UserModel>;
+  user: User | NonAttribute<UserModel>;
+  userId: number;
 }

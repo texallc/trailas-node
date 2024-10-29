@@ -1,13 +1,13 @@
+import { Category } from "../interfaces/category";
 import { PaginatedListServiceProps } from "../interfaces/userService";
+import CategoryModel from "../models/category";
 import TotalTablesModel from "../models/totalTable";
 import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
-import UserModel from "../models/user";
-import { User } from "../interfaces/user";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
     const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: UserModel, page, limit });
+    const listPromise = findAllModel({ model: CategoryModel, page, limit });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
 
@@ -17,15 +17,15 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
   }
 };
 
-export const createUserService = (user: User) =>
+export const createCategoryService = async (category: Category) =>
   createIncrementModel({
-    model: UserModel,
-    data: user,
-    where: { tableName: "users" },
-  });
+    model: CategoryModel,
+    data: category,
+    where: { tableName: "categories" },
+  })
 
-export const updateUserService = (user: User) =>
-  updateModel({ model: UserModel, data: user, where: { id: user.id } });
+export const updateCategoryService = (category: Partial<Category>) =>
+  updateModel({ model: CategoryModel, data: category, where: { id: category.id } })
 
-export const updateStatusUserService = (id: number, active: boolean) =>
-  updateModel({ model: UserModel, data: { id, active }, where: { id } });
+export const updateStatusCategoryService = (id: number, active: boolean) =>
+  updateModel({ model: CategoryModel, data: { id, active }, where: { id } })

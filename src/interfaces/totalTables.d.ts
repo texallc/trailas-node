@@ -1,5 +1,7 @@
+import { TableNames } from "../types";
+
 export interface TotalTables {
   readonly id?: number;
-  tableName: string;
+  tableName: TableNames;
   total: number;
 }

@@ -1,13 +1,13 @@
+import { Inventory } from "../interfaces/inventory";
 import { PaginatedListServiceProps } from "../interfaces/userService";
+import InventoryModel from "../models/inventory";
 import TotalTablesModel from "../models/totalTable";
 import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
-import UserModel from "../models/user";
-import { User } from "../interfaces/user";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
     const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: UserModel, page, limit });
+    const listPromise = findAllModel({ model: InventoryModel, page, limit });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
 
@@ -17,15 +17,15 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
   }
 };
 
-export const createUserService = (user: User) =>
+export const createInventoryService = (inventory: Inventory) =>
   createIncrementModel({
-    model: UserModel,
-    data: user,
-    where: { tableName: "users" },
-  });
+    model: InventoryModel,
+    data: { ...inventory, id: 0 },
+    where: { tableName: "inventories" },
+  })
 
-export const updateUserService = (user: User) =>
-  updateModel({ model: UserModel, data: user, where: { id: user.id } });
+export const updateInventoryService = (inventory: Partial<Inventory>) =>
+  updateModel({ model: InventoryModel, data: inventory, where: { id: inventory.id } })
 
-export const updateStatusUserService = (id: number, active: boolean) =>
-  updateModel({ model: UserModel, data: { id, active }, where: { id } });
+export const updateStatusInventoryService = (id: number, active: boolean) =>
+  updateModel({ model: InventoryModel, data: { id, active }, where: { id } })

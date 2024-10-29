@@ -17,7 +17,7 @@ class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationA
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
-  declare id: CreationOptional<number>;
+  declare id?: CreationOptional<number>;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
