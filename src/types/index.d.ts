@@ -11,7 +11,7 @@ export type Roles = "Super Admin" | "Administrador de Sucursal" | "Comprador" | 
 
 export type TypeMovement = "Entrada" | "Salida";
 
-export type TableNames = "products" | "users" | "inventories" | "movements" | "categories";
+export type TableNames = "products" | "users" | "inventories" | "movements" | "categories" | "sales";
 
 export type NewModelFunction<T> = ((model: T) => T) | null;
 
