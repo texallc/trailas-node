@@ -11,8 +11,7 @@
     "html": "find ./src -name '*.hbs' -o -name '*.css' -type f -exec cp --parents {} ./build \\;",
     "clean": "rm -rf build",
     "cleanModule": "rm -rf node_modules",
-    "start": "node --es-module-specifier-resolution=node build/src",
-    "syncModels": "node ./src/sequelize/syncModels.js"
+    "start": "nodemon -x node --es-module-specifier-resolution=node --no-warnings --loader ts-node/esm build/src/index.js"
   },
   "build": "tsc --project ./",
   "keywords": [],
