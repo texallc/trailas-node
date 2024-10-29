@@ -1,8 +1,7 @@
-import { FindAttributeOptions, ModelStatic, Model, WhereOptions, Includeable, Order, Transaction } from "@sequelize/core";
+import { FindAttributeOptions, ModelStatic, Model, WhereOptions, Includeable, Order, Transaction, Lock } from "@sequelize/core";
 import { User } from "./user";
 import TotalTablesModel from "../models/totalTable";
 import { TotalTables } from "./totalTables";
-
 export interface PropsCreateModel<T> {
   model: ModelStatic<Model<T, T>>;
   data: T;
@@ -21,6 +20,15 @@ export interface PropsFindOneModel<T> {
   attributes?: FindAttributeOptions<T> | (keyof T)[];
   where?: WhereOptions<T>;
   include?: Includeable | Includeable[];
+}
+
+export interface PropsFindByPrimaryKeyModel<T> {
+  model: ModelStatic<Model<T, T>>;
+  attributes?: FindAttributeOptions<T> | (keyof T)[];
+  primaryKey: number;
+  include?: Includeable | Includeable[];
+  lock?: Lock | { level: Lock; of: ModelStatic<Model> } | boolean;
+  transaction?: Transaction;
 }
 
 export interface PropsGetAllModel<T> {

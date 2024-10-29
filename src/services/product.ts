@@ -72,6 +72,7 @@ export const createProductService = async (product: Product) => {
     }
 
     await Promise.all(arrayPromise)
+    await transaction.commit()
   } catch (error) {
     throw handleErrorFunction(error);
   }
