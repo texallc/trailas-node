@@ -6,9 +6,9 @@ import { User } from "../interfaces/user";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const { page, limit } = getClearQueryString(req.query);
+    const { pagina, limite } = getClearQueryString(req.query);
 
-    const { list, total } = await paginatedListService({ page: +page, limit: +limit });
+    const { list, total } = await paginatedListService({ page: +pagina, limit: +limite });
 
     res.status(200).json({ list, total });
   } catch (error) {
@@ -42,7 +42,7 @@ export const update: RequestHandler = async (req, res) => {
 
 export const disable: RequestHandler = async (req, res) => {
   try {
-    const { id, active } = req.body as { id: number, active: boolean };
+    const { id, active } = req.body as { id: number, active: boolean; };
 
     await updateStatusUserService(id, active);
 
@@ -50,4 +50,4 @@ export const disable: RequestHandler = async (req, res) => {
   } catch (error) {
     handleError(res, error);
   }
-}
+};
