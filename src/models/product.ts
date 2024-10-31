@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, BelongsTo, NotNull, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, BelongsTo, NotNull, HasMany, Unique, AllowNull } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { Product } from '../interfaces/product';
 import { maxPrice, minPrice, stringLargeLength, stringLength } from '../constants/constants';
@@ -24,28 +24,35 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @NotNull
   declare name: string;
 
   @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
+  @Default("")
   declare description: string;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @Default("https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fproducts%2Fno-imagen.png?alt=media&token=2f32955a-776a-453d-bc89-f66b0a78725a")
   declare image: string;
 
   @Attribute(DataTypes.DECIMAL(15, 2))
   @Max(maxPrice)
   @Min(minPrice)
+  @NotNull
   declare price: number;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @NotNull
   declare brand: string;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
-  declare partNumber: string;
+  @AllowNull
+  @Unique
+  declare partNumber: string | null;
 
   @Attribute(DataTypes.BOOLEAN)
   @Default(true)
@@ -53,6 +60,7 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @Default("")
   declare unitType: string;
 
   @Attribute(DataTypes.INTEGER)

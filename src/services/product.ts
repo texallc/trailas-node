@@ -74,6 +74,7 @@ export const createProductService = async (product: Product) => {
     await Promise.all(arrayPromise)
     await transaction.commit()
   } catch (error) {
+    await transaction.rollback();
     throw handleErrorFunction(error);
   }
 }

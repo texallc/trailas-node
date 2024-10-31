@@ -5,7 +5,7 @@ import {
   CreationOptional,
   InferCreationAttributes
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Table, Unique } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Table, Unique, NotNull } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { TotalTables } from '../interfaces/totalTables';
 import { maxStock, minStock, stringLength } from '../constants/constants';
@@ -27,6 +27,7 @@ class TotalTablesModel extends Model<InferAttributes<TotalTablesModel>, InferCre
   @Attribute(DataTypes.INTEGER)
   @Max(maxStock)
   @Min(minStock)
+  @NotNull
   declare total: number;
 }
 
