@@ -28,10 +28,6 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @NotNull
   declare stock: number;
 
-  @Attribute(DataTypes.BOOLEAN)
-  @Default(true)
-  declare active: boolean;
-
   @BelongsToMany(() => ProductModel, {
     through: ProductInventoryModel,
     foreignKey: 'inventoryId',
