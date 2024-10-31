@@ -24,7 +24,6 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @Attribute(DataTypes.STRING)
   @Unique
-  @NotNull
   @Len(stringLength)
   declare uid: string;
 

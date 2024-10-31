@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, NotNull, BelongsTo, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, BelongsToMany, Table, NotNull, BelongsTo, HasMany } from '@sequelize/core/decorators-legacy';
 import { Max, Min } from '@sequelize/validator.js';
 import { maxStock, minStock } from '../constants/constants';
 import { Inventory } from '../interfaces/inventory';

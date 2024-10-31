@@ -41,20 +41,26 @@ export const createUserService = async (user: User) => {
     }
     throw handleErrorFunction(error);
   }
-}
+};
 
-export const updateUserService = async (user: User) => {
+export const updateUserService = async (user: Partial<User>) => {
+  const { id, email, password, uid } = user;
+
   const transaction = await sequelize.startUnmanagedTransaction();
-  try {
-    await updateModel({ model: UserModel, data: user, where: { id: user.id }, transaction });
-    await updateUserAuth(user.uid, { email: user.email });
 
-    await transaction.commit()
+  try {
+    await updateModel({ model: UserModel, data: user, where: { id }, transaction });
+
+    if (email || password) {
+      await updateUserAuth(uid!, { email, password });
+    }
+
+    await transaction.commit();
   } catch (error) {
     await transaction.rollback();
     throw handleErrorFunction(error);
   }
-}
+};
 
 export const updateStatusUserService = (id: number, active: boolean) =>
   updateModel({ model: UserModel, data: { id, active }, where: { id } });
