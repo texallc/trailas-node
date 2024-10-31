@@ -2,6 +2,7 @@ import { NonAttribute } from "@sequelize/core";
 import SaleDetailsModel from "../models/saleDetails";
 import UserModel from "../models/user";
 import { SaleDetails } from "./saleDetails";
+import { User } from "./user";
 
 export interface Sale {
   readonly id?: number;
