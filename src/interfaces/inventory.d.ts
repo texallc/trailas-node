@@ -1,9 +1,8 @@
-import InventoryModel from "../models/inventory";
+import { NonAttribute } from '@sequelize/core';
 import ProductModel from "../models/product";
 import UserModel from "../models/user";
-import { TypeMovement } from "../types";
 import { Product } from "./product";
-import { UserBranchOffice } from "./userBranchOffice";
+import { User } from "./user";
 
 export interface Inventory {
   readonly id?: number;

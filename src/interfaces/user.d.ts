@@ -1,4 +1,11 @@
+import { NonAttribute } from '@sequelize/core';
+import InventoryModel from "../models/inventory";
+import MovementModel from "../models/movement";
+import SaleModel from "../models/sale";
 import { Roles } from "../types";
+import { Inventory } from "./inventory";
+import { Movement } from "./movement";
+import { Sale } from "./sale";
 
 export interface User {
   readonly id?: number;

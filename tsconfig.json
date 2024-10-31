@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "strictNullChecks": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "./build/src",
@@ -15,12 +15,11 @@
       "./src/types"
     ],
     "rootDir": "src",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
   },
   "compileOnSave": true,
   "include": [
-    "./src/**/*",
-    "src/interfaces/.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_module"

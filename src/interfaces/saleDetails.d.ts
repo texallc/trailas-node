@@ -1,5 +1,6 @@
 import { NonAttribute } from "@sequelize/core";
 import ProductModel from "../models/product";
+import SaleModel from "../models/sale";
 import { Product } from "./product";
 import { Sale } from "./sale";
 

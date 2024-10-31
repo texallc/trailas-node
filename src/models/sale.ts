@@ -49,7 +49,7 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
   @NotNull
   declare sellerId: number;
 
-  @HasMany(() => SaleDetailsModel, /* foreign key */ 'saleId')
+  @HasMany(() => SaleDetailsModel, 'saleId')
   declare details: NonAttribute<SaleDetailsModel[]>;
 }
 
