@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany, NotNull } from '@sequelize/core/decorators-legacy';
 import { IsEmail, Len } from '@sequelize/validator.js';
 import { User } from '../interfaces/user';
 import { isEmail, phoneLength, rfcLength, stringLargeLength, stringLength } from '../constants/constants';
@@ -24,28 +24,34 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @Attribute(DataTypes.STRING)
   @Unique
+  @NotNull
   @Len(stringLength)
   declare uid: string;
 
   @Attribute(DataTypes.STRING)
   @IsEmail(isEmail)
   @Len(stringLength)
+  @NotNull
   declare email: string;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @NotNull
   declare name: string;
 
   @Attribute(DataTypes.INTEGER)
   @Len(phoneLength)
+  @Default(0)
   declare phone: number;
 
   @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
+  @Default("")
   declare description: string;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @Default("https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fprofiles%2Fprofile-user-icon-isolated-on-white-background-eps10-free-vector.jpg?alt=media&token=2f3c8ccc-6c20-4a83-81d6-8bb28b7ac167")
   declare image: string;
 
   @Attribute(DataTypes.BOOLEAN)
@@ -54,6 +60,7 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
+  @NotNull
   declare role: Roles;
 
   @HasMany(() => InventoryModel, 'userId')
@@ -70,6 +77,7 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @Attribute(DataTypes.STRING)
   @Len(rfcLength)
+  @Default("")
   declare rfc: string;
 }
 

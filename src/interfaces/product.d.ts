@@ -11,7 +11,7 @@ export interface Product {
   price: number;
   brand: string;
   unitType: string;
-  partNumber: string;
+  partNumber: string | null;
   description: string;
   active: boolean;
   image: string;

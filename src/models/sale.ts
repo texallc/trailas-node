@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute,
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, HasMany, Table, BelongsTo } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, HasMany, Table, BelongsTo, NotNull } from '@sequelize/core/decorators-legacy';
 import { Max, Min } from '@sequelize/validator.js';
 import { maxPrice, minPrice } from '../constants/constants';
 import { Sale } from "../interfaces/sale";
@@ -23,11 +23,13 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
   @Attribute(DataTypes.DECIMAL)
   @Max(maxPrice)
   @Min(minPrice)
+  @NotNull
   declare total: number;
 
   @Attribute(DataTypes.DECIMAL)
   @Max(maxPrice)
   @Min(minPrice)
+  @NotNull
   declare subtotal: number;
 
   @Attribute(DataTypes.DECIMAL)
@@ -37,17 +39,18 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
   declare buyer: NonAttribute<UserModel>;
 
   @Attribute(DataTypes.INTEGER)
+  @NotNull
   declare buyerId: number;
 
   @BelongsTo(() => UserModel, 'sellerId')
   declare seller: NonAttribute<UserModel>;
 
   @Attribute(DataTypes.INTEGER)
+  @NotNull
   declare sellerId: number;
 
   @HasMany(() => SaleDetailsModel, /* foreign key */ 'saleId')
-  declare details?: NonAttribute<SaleDetailsModel[]>;
-
+  declare details: NonAttribute<SaleDetailsModel[]>;
 }
 
 export default SaleModel;
