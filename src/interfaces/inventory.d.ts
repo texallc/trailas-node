@@ -2,7 +2,6 @@ import { NonAttribute } from '@sequelize/core';
 import ProductModel from "../models/product";
 import UserModel from "../models/user";
 import { Product } from "./product";
-import { UserBranchOffice } from "./userBranchOffice";
 import { User } from "./user";
 
 export interface Inventory {

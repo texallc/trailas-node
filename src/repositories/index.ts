@@ -15,31 +15,31 @@ export const createIncrementModel = async <T extends {}>({ model, data, where, t
     const createModelPromise = createModel({ model, data, transaction: t });
     const incrementModelPromise = incrementModel({ where, transaction: t });
 
-    const [newModel] = await Promise.all([createModelPromise, incrementModelPromise])
+    const [newModel] = await Promise.all([createModelPromise, incrementModelPromise]);
     return newModel;
   }
   catch (error) {
     t.rollback();
     throw error;
   }
-}
+};
 
 export const updateModel = <T extends {}>({ model, data, where, transaction }: PropsUpdateModel<T>) => model.update(data, { where, transaction });
 
-export const findOneModel = <T>({ model, where, include, attributes }: PropsFindOneModel<T>) => model.findOne({
+export const findOneModel = <T extends {}>({ model, where, include, attributes }: PropsFindOneModel<T>) => model.findOne({
   where,
   attributes: attributes as FindAttributeOptions<T>,
   include,
   limit: 1
 });
 
-export const findByPrimaryKeyModel = <T>({ model, primaryKey, include, attributes, transaction }: PropsFindByPrimaryKeyModel<T>) => model.findByPk(primaryKey, {
+export const findByPrimaryKeyModel = <T extends {}>({ model, primaryKey, include, attributes, transaction }: PropsFindByPrimaryKeyModel<T>) => model.findByPk(primaryKey, {
   attributes: attributes as FindAttributeOptions<T>,
   include,
   transaction
 });
 
-export const findAllModel = <T>({ model, where, include, attributes, order, limit, page }: PropsGetAllModel<T>) => model.findAll({
+export const findAllModel = <T extends {}>({ model, where, include, attributes, order, limit, page }: PropsGetAllModel<T>) => model.findAll({
   where,
   attributes: attributes as FindAttributeOptions<T>,
   include,
@@ -71,7 +71,7 @@ export const bulkCreateIncrementModel = async <T extends {}>({ model, data, wher
     const bulkCreatePromise = bulkCreate({ model, data, transaction });
     const incrementModelPromise = incrementModel({ where, transaction, by: data.length });
 
-    const [newModels] = await Promise.all([bulkCreatePromise, incrementModelPromise])
+    const [newModels] = await Promise.all([bulkCreatePromise, incrementModelPromise]);
     return newModels;
   }
   catch (error) {
