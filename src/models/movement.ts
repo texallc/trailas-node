@@ -24,6 +24,7 @@ class MovementModel extends Model<InferAttributes<MovementModel>, InferCreationA
   @Attribute(DataTypes.INTEGER)
   @Max(maxStock)
   @Min(minStock)
+  @NotNull
   declare quantity: number;
 
   @BelongsTo(() => InventoryModel, 'inventoryId')

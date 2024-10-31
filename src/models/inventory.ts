@@ -25,6 +25,7 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @Attribute(DataTypes.INTEGER)
   @Max(maxStock)
   @Min(minStock)
+  @NotNull
   declare stock: number;
 
   @Attribute(DataTypes.BOOLEAN)
