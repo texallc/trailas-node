@@ -32,9 +32,9 @@ export const update: RequestHandler = async (req, res) => {
   try {
     const body = req.body as User;
 
-    const user = await updateUserService(body);
+    await updateUserService(body);
 
-    res.status(200).json(user);
+    res.status(200).json({ message: "Usuario actualizado con exito!" });
   } catch (error) {
     handleError(res, error);
   }
