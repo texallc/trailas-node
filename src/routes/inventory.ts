@@ -1,14 +1,15 @@
 import { Application, Router } from "express";
+import { paginatedList } from "../controllers/inventory";
 
 const router = Router();
 
 const RouteInventory = (app: Application) => {
-  router.get('/list');
+  router.get('/lista', paginatedList);
   router.post('/create');
   router.put('/update');
   router.delete('/delete');
 
-  app.use("/inventories", router);
+  app.use("/inventarios", router);
 };
 
 export default RouteInventory;
