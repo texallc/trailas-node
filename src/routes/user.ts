@@ -5,12 +5,12 @@ import isAuthenticated from "../middlewares/auth";
 const router = Router();
 
 const RouteUser = (app: Application) => {
-  router.get('/paginated-list', isAuthenticated, paginatedList);
+  router.get('/lista', isAuthenticated, paginatedList);
   router.post('/create');
   router.put('/update');
   router.delete('/delete');
 
-  app.use("/users", router);
+  app.use("/usuarios", router);
 };
 
 export default RouteUser;
