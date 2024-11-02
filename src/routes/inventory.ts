@@ -4,7 +4,7 @@ import { paginatedList } from "../controllers/inventory";
 const router = Router();
 
 const RouteInventory = (app: Application) => {
-  router.get('/lista', paginatedList);
+  router.get('/list', paginatedList);
   router.post('/create');
   router.put('/update');
   router.delete('/delete');
