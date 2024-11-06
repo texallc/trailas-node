@@ -30,7 +30,7 @@ export const createProductService = async (product: Product) => {
   try {
     const inventoryPromise = createIncrementModel({
       model: InventoryModel,
-      data: { stock: product.stock || 0, active: true, userId },
+      data: { stock: product.stock || 0, userId },
       where: { tableName: "inventories" },
       transaction
     })
