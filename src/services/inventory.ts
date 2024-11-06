@@ -27,5 +27,5 @@ export const createInventoryService = (inventory: Inventory) =>
 export const updateInventoryService = (inventory: Partial<Inventory>) =>
   updateModel({ model: InventoryModel, data: inventory, where: { id: inventory.id } })
 
-export const updateStatusInventoryService = (id: number, active: boolean) =>
-  updateModel({ model: InventoryModel, data: { id, active }, where: { id } })
+export const updateStatusInventoryService = (id: number) =>
+  updateModel({ model: InventoryModel, data: { id }, where: { id } })

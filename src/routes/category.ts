@@ -4,7 +4,7 @@ import { paginatedList } from "../controllers/category";
 const router = Router();
 
 const RouteCategory = (app: Application) => {
-  router.get('/lista', paginatedList);
+  router.get('/list', paginatedList);
   router.post('/create');
   router.put('/update');
   router.delete('/delete');
