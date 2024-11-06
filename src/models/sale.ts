@@ -12,6 +12,7 @@ import { maxPrice, minPrice } from '../constants/constants';
 import { Sale } from "../interfaces/sale";
 import UserModel from './user';
 import SaleDetailsModel from './saleDetails';
+import { Status } from '../types';
 
 @Table({ tableName: 'sales' })
 class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttributes<SaleModel>> implements Sale {
@@ -34,6 +35,9 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
 
   @Attribute(DataTypes.DECIMAL)
   declare saleTax: number;
+
+  @Attribute(DataTypes.STRING)
+  declare status: Status;
 
   @BelongsTo(() => UserModel, 'buyerId')
   declare buyer: NonAttribute<UserModel>;

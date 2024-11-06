@@ -13,6 +13,8 @@ export type TypeMovement = "Entrada" | "Salida";
 
 export type TableNames = "products" | "users" | "inventories" | "movements" | "categories" | "sales" | "saleDetails";
 
+export type Status = "Normal" | "Cancelada";
+
 export type NewModelFunction<T> = ((model: T) => T) | null;
 
 export type ReqQuery = Record<string, string>;

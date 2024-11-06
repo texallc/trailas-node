@@ -8,7 +8,7 @@ import MovementModel from "../models/movement";
 import SaleModel from "../models/sale";
 import SaleDetailsModel from "../models/saleDetails";
 import TotalTablesModel from "../models/totalTable";
-import { bulkCreateIncrementModel, createIncrementModel, findAllModel, findByPrimaryKeyModel, findOneModel } from "../repositories";
+import { bulkCreateIncrementModel, createIncrementModel, findAllModel, findByPrimaryKeyModel, findOneModel, updateModel } from "../repositories";
 import sequelize from "../sequelize";
 import { handleErrorFunction } from "../utils/handleError";
 import { Lock } from "@sequelize/core";
@@ -85,3 +85,6 @@ export const createSaleService = async (sale: Sale) => {
     throw handleErrorFunction(error);
   }
 };
+
+export const updateSaleService = (sale: Partial<Sale>) =>
+  updateModel({ model: SaleModel, data: sale, where: { id: sale.id } })
