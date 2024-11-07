@@ -82,9 +82,24 @@ export const createSaleService = async (sale: Sale) => {
     await Promise.all([createSaleDetailsPromise, createMovementaPromise])
     await transaction.commit()
   } catch (error) {
+    await transaction.rollback();
     throw handleErrorFunction(error);
   }
 };
 
-export const updateSaleService = (sale: Partial<Sale>) =>
-  updateModel({ model: SaleModel, data: sale, where: { id: sale.id } })
+export const updateSaleService = async (sale: Partial<Sale>) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateSale = await updateModel({
+      model: SaleModel,
+      data: sale,
+      where: { id: sale.id },
+      transaction
+    })
+    await transaction.commit();
+    return updateSale;
+  } catch (error) {
+    await transaction.rollback();
+    throw handleErrorFunction(error);
+  }
+}

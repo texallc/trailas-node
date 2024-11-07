@@ -62,5 +62,19 @@ export const updateUserService = async (user: Partial<User>) => {
   }
 };
 
-export const updateStatusUserService = (id: number, active: boolean) =>
-  updateModel({ model: UserModel, data: { id, active }, where: { id } });
+export const updateStatusUserService = async (id: number, active: boolean) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateSatusUser = await updateModel({
+      model: UserModel,
+      data: { id, active },
+      where: { id },
+      transaction
+    });
+    await transaction.commit();
+    return updateSatusUser;
+  } catch (error) {
+    await transaction.rollback();
+    throw handleErrorFunction(error);
+  }
+}
