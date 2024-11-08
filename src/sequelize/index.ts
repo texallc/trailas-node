@@ -23,7 +23,6 @@ const sequelize = new Sequelize({
   database,
   host,
   port,
-
   models: [CategoryModel, ProductModel, InventoryModel, ProductInventory, MovementModel, UserModel, TotalTablesModel, SaleModel, SaleDetailsModel],
 });
 
