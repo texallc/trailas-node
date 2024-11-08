@@ -14,6 +14,7 @@ import CategoryModel from './category';
 import InventoryModel from './inventory';
 import ProductInventoryModel from './productInventory';
 import SaleDetailsModel from './saleDetails';
+import { TypeUnit } from '../types';
 
 @Table({ tableName: 'products' })
 class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAttributes<ProductModel>> implements Product {
@@ -61,7 +62,7 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
   @Default("")
-  declare unitType: string;
+  declare unitType: TypeUnit;
 
   @Attribute(DataTypes.INTEGER)
   @NotNull

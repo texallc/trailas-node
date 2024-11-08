@@ -15,6 +15,8 @@ export type TableNames = "products" | "users" | "inventories" | "movements" | "c
 
 export type Status = "Normal" | "Cancelada";
 
+export type TypeUnit = "Pza" | "Kg" | "L" | "m" | "m2" | "Gal" | "ml" | "g" | "m3" | "Pqt" | "Caja" | "Juego";
+
 export type NewModelFunction<T> = ((model: T) => T) | null;
 
 export type ReqQuery = Record<string, string>;

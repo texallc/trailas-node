@@ -13,7 +13,7 @@ import { handleErrorFunction } from "../utils/handleError";
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
     const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "products" } });
-    const listPromise = findAllModel({ model: ProductModel, page, limit });
+    const listPromise = findAllModel({ model: ProductModel, page, limit, include: "category" });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
 
@@ -58,7 +58,6 @@ export const createProductService = async (product: Product) => {
       const movementPromise = createIncrementModel({
         model: MovementModel,
         data: {
-          id: 0,
           typeMovement: "Entrada",
           quantity: product.stock || 0,
           inventoryId,

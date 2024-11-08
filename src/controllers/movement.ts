@@ -6,9 +6,9 @@ import { Movement } from "../interfaces/movement";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const { page, limit } = getClearQueryString(req.query);
+    const { pagina, limite } = getClearQueryString(req.query);
 
-    const { list, total } = await paginatedListService({ page: +page, limit: +limit });
+    const { list, total } = await paginatedListService({ page: +pagina, limit: +limite });
 
     res.status(200).json({ list, total });
   } catch (error) {
