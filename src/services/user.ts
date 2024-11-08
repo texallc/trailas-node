@@ -22,23 +22,28 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
 
 export const createUserService = async (user: User) => {
   let uid: string = "";
+
   try {
     const { uid: _uid } = await createUserAuth({ email: user.email, password: user.password });
+
     uid = _uid;
   } catch (error) {
     throw handleErrorFunction(error);
   }
 
   try {
-    await createIncrementModel({
+    const newUser = await createIncrementModel({
       model: UserModel,
       data: { ...user, uid },
       where: { tableName: "users" },
     });
+
+    return newUser.dataValues;
   } catch (error) {
     if (uid) {
       deleteUserAuth(uid);
     }
+
     throw handleErrorFunction(error);
   }
 };
@@ -77,4 +82,4 @@ export const updateStatusUserService = async (id: number, active: boolean) => {
     await transaction.rollback();
     throw handleErrorFunction(error);
   }
-}
+};

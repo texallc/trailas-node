@@ -15,7 +15,7 @@ export const stringLength: Length = {
 } as const;
 
 export const rfcLength: Length = {
-  args: [13, 13],
+  args: [0, 13],
   msg: "El RFC tiene que ser de 13 caracteres."
 } as const;
 
@@ -57,7 +57,7 @@ export const minStock: Min = {
 export const roleLength: Length = {
   args: [8, 22],
   msg: "Los caracteres permitidos son inválidos."
-} as const
+} as const;
 
 export const typeMovementLength: Length = {
   args: [6, 7],
