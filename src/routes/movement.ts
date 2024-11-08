@@ -9,7 +9,7 @@ const RouteMovement = (app: Application) => {
   router.put('/update', update);
   router.delete('/delete', update);
 
-  app.use("/movements", router);
+  app.use("/movimientos", router);
 };
 
 export default RouteMovement;
