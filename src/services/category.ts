@@ -3,6 +3,7 @@ import { PaginatedListServiceProps } from "../interfaces/userService";
 import CategoryModel from "../models/category";
 import TotalTablesModel from "../models/totalTable";
 import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import sequelize from "../sequelize";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
@@ -17,15 +18,53 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
   }
 };
 
-export const createCategoryService = async (category: Category) =>
-  createIncrementModel({
-    model: CategoryModel,
-    data: category,
-    where: { tableName: "categories" },
-  })
+export const createCategoryService = async (category: Category) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const newCategory = await createIncrementModel({
+      model: CategoryModel,
+      data: category,
+      where: { tableName: "categories" },
+      transaction
+    })
+    await transaction.commit();
+    return newCategory;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+}
 
-export const updateCategoryService = (category: Partial<Category>) =>
-  updateModel({ model: CategoryModel, data: category, where: { id: category.id } })
+export const updateCategoryService = async (category: Partial<Category>) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateCategory = await updateModel({
+      model: CategoryModel,
+      data: category,
+      where: { id: category.id },
+      transaction
+    })
+    await transaction.commit();
+    return updateCategory;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+}
 
-export const updateStatusCategoryService = (id: number, active: boolean) =>
-  updateModel({ model: CategoryModel, data: { id, active }, where: { id } })
+export const updateStatusCategoryService = async (id: number, active: boolean) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateSatatusCategory = await updateModel({
+      model: CategoryModel,
+      data: { id, active },
+      where: { id },
+      transaction
+    })
+    await transaction.commit();
+    return updateSatatusCategory;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+}

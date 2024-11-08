@@ -3,6 +3,7 @@ import { PaginatedListServiceProps } from "../interfaces/userService";
 import InventoryModel from "../models/inventory";
 import TotalTablesModel from "../models/totalTable";
 import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import sequelize from "../sequelize";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
@@ -17,15 +18,53 @@ export const paginatedListService = async ({ page, limit }: PaginatedListService
   }
 };
 
-export const createInventoryService = (inventory: Inventory) =>
-  createIncrementModel({
-    model: InventoryModel,
-    data: { ...inventory, id: 0 },
-    where: { tableName: "inventories" },
-  })
+export const createInventoryService = async (inventory: Inventory) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const newInventory = await createIncrementModel({
+      model: InventoryModel,
+      data: { ...inventory, id: 0 },
+      where: { tableName: "inventories" },
+      transaction
+    })
+    await transaction.commit();
+    return newInventory;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+}
 
-export const updateInventoryService = (inventory: Partial<Inventory>) =>
-  updateModel({ model: InventoryModel, data: inventory, where: { id: inventory.id } })
+export const updateInventoryService = async (inventory: Partial<Inventory>) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateInventory = await updateModel({
+      model: InventoryModel,
+      data: inventory,
+      where: { id: inventory.id },
+      transaction
+    })
+    await transaction.commit();
+    return updateInventory;
+  } catch (error) {
+    await transaction.rollback();
+    throw error
+  }
+}
 
-export const updateStatusInventoryService = (id: number) =>
-  updateModel({ model: InventoryModel, data: { id }, where: { id } })
+export const updateStatusInventoryService = async (id: number) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateSatatusInvenotry = await updateModel({
+      model: InventoryModel,
+      data: { id },
+      where: { id },
+      transaction
+    })
+    await transaction.commit();
+    return updateSatatusInvenotry;
+  } catch (error) {
+    await transaction.rollback();
+    throw error
+  }
+}

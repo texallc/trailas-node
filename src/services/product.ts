@@ -12,7 +12,7 @@ import { handleErrorFunction } from "../utils/handleError";
 
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
-    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
+    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "products" } });
     const listPromise = findAllModel({ model: ProductModel, page, limit });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
@@ -73,14 +73,43 @@ export const createProductService = async (product: Product) => {
 
     await Promise.all(arrayPromise)
     await transaction.commit()
+    return productCreated
   } catch (error) {
     await transaction.rollback();
     throw handleErrorFunction(error);
   }
 }
 
-export const updateProductService = (product: Partial<Product>) =>
-  updateModel({ model: ProductModel, data: product, where: { id: product.id } })
+export const updateProductService = async (product: Partial<Product>) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateProduct = await updateModel({
+      model: ProductModel,
+      data: product,
+      where: { id: product.id },
+      transaction
+    })
+    await transaction.commit();
+    return updateProduct;
+  } catch (error) {
+    await transaction.rollback();
+    throw handleErrorFunction(error);
+  }
+}
 
-export const updateStatusProductService = (id: number, active: boolean) =>
-  updateModel({ model: ProductModel, data: { id, active }, where: { id } })
+export const updateStatusProductService = async (id: number, active: boolean) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  try {
+    const updateSatatusProduct = await updateModel({
+      model: ProductModel,
+      data: { id, active },
+      where: { id },
+      transaction
+    })
+    await transaction.commit();
+    return updateSatatusProduct;
+  } catch (error) {
+    await transaction.rollback();
+    throw handleErrorFunction(error);
+  }
+}
