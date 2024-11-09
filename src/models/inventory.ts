@@ -6,14 +6,13 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, BelongsToMany, Table, NotNull, BelongsTo, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Table, NotNull, BelongsTo, HasMany } from '@sequelize/core/decorators-legacy';
 import { Max, Min } from '@sequelize/validator.js';
 import { maxStock, minStock } from '../constants/constants';
 import { Inventory } from '../interfaces/inventory';
 import ProductModel from './product';
 import UserModel from './user';
 import MovementModel from './movement';
-import ProductInventoryModel from './productInventory';
 
 @Table({ tableName: 'inventories' })
 class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreationAttributes<InventoryModel>> implements Inventory {
@@ -28,12 +27,12 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @NotNull
   declare stock: number;
 
-  @BelongsToMany(() => ProductModel, {
-    through: ProductInventoryModel,
-    foreignKey: 'inventoryId',
-    otherKey: 'productId'
-  })
-  declare products: NonAttribute<ProductModel[]>;
+  @Attribute(DataTypes.INTEGER)
+  @NotNull
+  declare productId: number;
+
+  @BelongsTo(() => ProductModel, 'productId')
+  declare product: NonAttribute<ProductModel>;
 
   @BelongsTo(() => UserModel, 'userId')
   declare user: NonAttribute<UserModel>;
