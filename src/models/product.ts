@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, BelongsTo, NotNull, HasMany, Unique, AllowNull } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, Table, BelongsTo, NotNull, HasMany, Unique, AllowNull } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { Product } from '../interfaces/product';
 import { maxPrice, minPrice, stringLargeLength, stringLength } from '../constants/constants';
