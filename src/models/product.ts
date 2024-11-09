@@ -12,7 +12,6 @@ import { Product } from '../interfaces/product';
 import { maxPrice, minPrice, stringLargeLength, stringLength } from '../constants/constants';
 import CategoryModel from './category';
 import InventoryModel from './inventory';
-import ProductInventoryModel from './productInventory';
 import SaleDetailsModel from './saleDetails';
 import { TypeUnit } from '../types';
 
@@ -71,11 +70,8 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @BelongsTo(() => CategoryModel, 'categoryId')
   declare category: NonAttribute<CategoryModel>;
 
-  @BelongsToMany(() => InventoryModel, {
-    through: ProductInventoryModel,
-    foreignKey: 'productId',
-    otherKey: 'inventoryId'
-  })
+
+  @HasMany(() => InventoryModel, /* foreign key */ 'productId')
   declare inventories?: NonAttribute<InventoryModel[]>;
 
   @HasMany(() => SaleDetailsModel, 'productId')

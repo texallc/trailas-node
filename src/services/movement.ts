@@ -8,7 +8,7 @@ import sequelize from "../sequelize";
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
     const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: MovementModel, page, limit });
+    const listPromise = findAllModel({ model: MovementModel, page, limit, include: "user" });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
 

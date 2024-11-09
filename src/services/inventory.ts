@@ -1,6 +1,7 @@
 import { Inventory } from "../interfaces/inventory";
 import { PaginatedListServiceProps } from "../interfaces/userService";
 import InventoryModel from "../models/inventory";
+import ProductModel from "../models/product";
 import TotalTablesModel from "../models/totalTable";
 import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
 import sequelize from "../sequelize";
@@ -8,7 +9,15 @@ import sequelize from "../sequelize";
 export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
   try {
     const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: InventoryModel, page, limit });
+    const listPromise = findAllModel({
+      model: InventoryModel, page, limit, include: [
+        {
+          model: ProductModel,
+          as: 'products', // Usa el alias definido en InventoryModel
+          through: { attributes: [] } // Excluye atributos de la tabla pivote si no los necesitas
+        }
+      ]
+    });
 
     const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
 

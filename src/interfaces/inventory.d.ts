@@ -9,7 +9,8 @@ export interface Inventory {
   stock: number;
   createdAt?: Date;
   updatedAt?: Date;
-  products: Product[] | NonAttribute<ProductModel[]>;
+  productId: number;
+  product: Product | NonAttribute<ProductModel>;
   user: User | NonAttribute<UserModel>;
   userId: number;
 }

@@ -4,9 +4,8 @@ import { PaginatedListServiceProps } from "../interfaces/userService";
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
 import ProductModel from "../models/product";
-import ProductInventoryModel from "../models/productInventory";
 import TotalTablesModel from "../models/totalTable";
-import { createIncrementModel, createModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
 import sequelize from "../sequelize";
 import { handleErrorFunction } from "../utils/handleError";
 
@@ -28,51 +27,37 @@ export const createProductService = async (product: Product) => {
   const transaction = await sequelize.startUnmanagedTransaction();
 
   try {
-    const inventoryPromise = createIncrementModel({
-      model: InventoryModel,
-      data: { stock: product.stock || 0, userId },
-      where: { tableName: "inventories" },
-      transaction
-    })
-
-    const productPromise = createIncrementModel({
+    const newProduct = await createIncrementModel({
       model: ProductModel,
       data: product,
       where: { tableName: "products" },
       transaction
     })
 
-    const [inventoryCreated, productCreated] = await Promise.all([inventoryPromise, productPromise])
-
-    const inventoryId = inventoryCreated.dataValues.id!
-
-    const productInventoryPromise = createModel({
-      model: ProductInventoryModel,
-      data: { inventoryId, productId: productCreated.dataValues.id! },
+    const mewInventory = await createIncrementModel({
+      model: InventoryModel,
+      data: { stock: product.stock || 0, userId, productId: newProduct.dataValues.id! },
+      where: { tableName: "inventories" },
       transaction
     })
 
-    const arrayPromise: Promise<unknown>[] = [productInventoryPromise]
-
     if (product.stock) {
-      const movementPromise = createIncrementModel({
+      await createIncrementModel({
         model: MovementModel,
         data: {
           typeMovement: "Entrada",
           quantity: product.stock || 0,
-          inventoryId,
+          inventoryId: mewInventory.dataValues.id!,
           userId
         },
         where: { tableName: "movements" },
         transaction
       })
-
-      arrayPromise.push(movementPromise)
     }
 
-    await Promise.all(arrayPromise)
     await transaction.commit()
-    return productCreated
+
+    return newProduct;
   } catch (error) {
     await transaction.rollback();
     throw handleErrorFunction(error);
