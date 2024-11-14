@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
-import { getClearQueryString } from "../utils/functions";
+import { clearSearchQuery } from "../utils/functions";
 import { createSaleService, paginatedListService, updateSaleService } from "../services/sale";
 import { Sale } from "../interfaces/sale";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const { pagina, limite } = getClearQueryString(req.query);
+    const query = clearSearchQuery<Sale>(req.query);
 
-    const { list, total } = await paginatedListService({ page: +pagina, limit: +limite });
+    const { list, total } = await paginatedListService(query);
 
     res.status(200).json({ list, total });
   } catch (error) {

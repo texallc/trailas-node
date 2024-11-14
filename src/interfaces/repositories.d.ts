@@ -1,5 +1,4 @@
 import { FindAttributeOptions, ModelStatic, Model, WhereOptions, Includeable, Order, Transaction, Lock } from "@sequelize/core";
-import { TotalTables } from "./totalTables";
 
 export interface PropsCreateModel<T extends {}> {
   model: ModelStatic<Model<T, T>>;
@@ -51,10 +50,4 @@ export interface PropsDeleteModel<T extends {}> {
   model: ModelStatic<Model<T, T>>,
   where: WhereOptions<T>;
   transaction?: Transaction;
-}
-
-export interface PropsIncrementModel {
-  where: Partial<TotalTables>;
-  transaction?: Transaction;
-  by?: number;
 }

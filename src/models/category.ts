@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, HasMany, Table, NotNull } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, HasMany, Table, NotNull, Unique } from '@sequelize/core/decorators-legacy';
 import { Len } from '@sequelize/validator.js';
 import { Category } from '../interfaces/category';
 import { stringLargeLength, stringLength } from '../constants/constants';
@@ -22,6 +22,10 @@ class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationA
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
   @NotNull
+  @Unique({
+    name: 'name',
+    msg: 'Ya existe una categoria con este nombre.'
+  })
   declare name: string;
 
   @Attribute(DataTypes.TEXT)

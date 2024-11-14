@@ -1,25 +1,8 @@
 import { FindAttributeOptions } from "@sequelize/core";
-import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel, PropsIncrementModel, PropsFindByPrimaryKeyModel } from "../interfaces/repositories";
+import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel, PropsFindByPrimaryKeyModel } from "../interfaces/repositories";
 import { MakeNullishOptional } from "@sequelize/core/_non-semver-use-at-your-own-risk_/utils/types.js";
-import TotalTablesModel from "../models/totalTable";
 
 export const createModel = <T extends {}>({ model, data, transaction }: PropsCreateModel<T>) => model.create(data, { transaction });
-
-export const incrementModel = ({ where, transaction, by }: PropsIncrementModel) => TotalTablesModel.increment("total", { where, by, transaction });
-
-export const createIncrementModel = async <T extends {}>({ model, data, where, transaction }: Omit<PropsIncrementModel, "by"> & PropsCreateModel<T>) => {
-
-  try {
-    const createModelPromise = createModel({ model, data, transaction });
-    const incrementModelPromise = incrementModel({ where, transaction });
-
-    const [newModel] = await Promise.all([createModelPromise, incrementModelPromise]);
-    return newModel;
-  }
-  catch (error) {
-    throw error;
-  }
-};
 
 export const updateModel = <T extends {}>({ model, data, where, transaction }: PropsUpdateModel<T>) => model.update(data, { where, transaction });
 
@@ -45,6 +28,15 @@ export const findAllModel = <T extends {}>({ model, where, include, attributes, 
   limit
 });
 
+export const findAndCountModel = <T extends {}>({ model, where, include, attributes, order, limit, page }: PropsGetAllModel<T>) => model.findAndCountAll({
+  where,
+  attributes: attributes as FindAttributeOptions<T>,
+  include,
+  offset: typeof page === "undefined" ? page : (page - 1) * (limit || 5),
+  order: order || [['id', 'DESC']],
+  limit
+});
+
 export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate, transaction }: PropsBulkCreate<T>) => {
   try {
     const result = await model.bulkCreate(
@@ -59,19 +51,6 @@ export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate,
 
     return result;
   } catch (error) {
-    throw error;
-  }
-};
-
-export const bulkCreateIncrementModel = async <T extends {}>({ model, data, where, transaction }: Omit<PropsIncrementModel, "by"> & PropsBulkCreate<T>) => {
-  try {
-    const bulkCreatePromise = bulkCreate({ model, data, transaction });
-    const incrementModelPromise = incrementModel({ where, transaction, by: data.length });
-
-    const [newModels] = await Promise.all([bulkCreatePromise, incrementModelPromise]);
-    return newModels;
-  }
-  catch (error) {
     throw error;
   }
 };

@@ -7,6 +7,7 @@ const RouteCategory = (app: Application) => {
   router.get('/list', paginatedList);
   router.post('/create', create);
   router.put('/update', update);
+  router.patch('/update', update);
   router.delete('/delete', update);
 
   app.use("/categorias", router);

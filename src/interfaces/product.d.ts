@@ -17,5 +17,5 @@ export interface Product {
   category: Category | NonAttribute<CategoryModel>;
   categoryId: number;
   stock?: number;
-  inventoryId?: number;
+  userIds?: number[];
 }

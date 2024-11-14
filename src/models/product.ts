@@ -45,13 +45,16 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
-  @NotNull
+  @Default("")
   declare brand: string;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
   @AllowNull
-  @Unique
+  @Unique({
+    name: 'partNumber',
+    msg: 'El numero de parte ya existe'
+  })
   declare partNumber: string | null;
 
   @Attribute(DataTypes.BOOLEAN)
@@ -69,7 +72,6 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
 
   @BelongsTo(() => CategoryModel, 'categoryId')
   declare category: NonAttribute<CategoryModel>;
-
 
   @HasMany(() => InventoryModel, /* foreign key */ 'productId')
   declare inventories?: NonAttribute<InventoryModel[]>;
