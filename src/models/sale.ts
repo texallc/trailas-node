@@ -34,7 +34,10 @@ class SaleModel extends Model<InferAttributes<SaleModel>, InferCreationAttribute
   declare subtotal: number;
 
   @Attribute(DataTypes.DECIMAL)
-  declare saleTax: number;
+  declare taxes: number;
+
+  @Attribute(DataTypes.DECIMAL)
+  declare discount: number;
 
   @Attribute(DataTypes.STRING)
   declare status: Status;

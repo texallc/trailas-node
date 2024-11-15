@@ -68,7 +68,7 @@ export const updateUserService = async (user: Partial<User>) => {
     const [userAuth] = await Promise.all([userAuthPromise, updateModelPromise]);
 
     if (userAuth.email !== email || password) {
-      await updateUserAuth(uid!, { email, password });
+      await updateUserAuth(uid!, password ? { email, password } : { email });
     }
 
     await transaction.commit();

@@ -1,16 +1,17 @@
 import { FindAttributeOptions } from "@sequelize/core";
-import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel, PropsFindByPrimaryKeyModel } from "../interfaces/repositories";
+import { PropsBulkCreate, PropsDeleteModel, PropsGetAllModel, PropsFindOneModel, PropsCreateModel, PropsUpdateModel, PropsFindByPrimaryKeyModel, PropsIncrementModel } from "../interfaces/repositories";
 import { MakeNullishOptional } from "@sequelize/core/_non-semver-use-at-your-own-risk_/utils/types.js";
 
 export const createModel = <T extends {}>({ model, data, transaction }: PropsCreateModel<T>) => model.create(data, { transaction });
 
 export const updateModel = <T extends {}>({ model, data, where, transaction }: PropsUpdateModel<T>) => model.update(data, { where, transaction });
 
-export const findOneModel = <T extends {}>({ model, where, include, attributes }: PropsFindOneModel<T>) => model.findOne({
+export const findOneModel = <T extends {}>({ model, where, include, attributes, transaction }: PropsFindOneModel<T>) => model.findOne({
   where,
   attributes: attributes as FindAttributeOptions<T>,
   include,
-  limit: 1
+  limit: 1,
+  transaction
 });
 
 export const findByPrimaryKeyModel = <T extends {}>({ model, primaryKey, include, attributes, transaction }: PropsFindByPrimaryKeyModel<T>) => model.findByPk(primaryKey, {
@@ -23,18 +24,18 @@ export const findAllModel = <T extends {}>({ model, where, include, attributes, 
   where,
   attributes: attributes as FindAttributeOptions<T>,
   include,
-  offset: typeof page === "undefined" ? page : (page - 1) * (limit || 5),
+  offset: typeof page === "undefined" ? page : (page - 1) * (limit || 10),
   order: order || [['id', 'DESC']],
-  limit
+  limit: limit || 10
 });
 
 export const findAndCountModel = <T extends {}>({ model, where, include, attributes, order, limit, page }: PropsGetAllModel<T>) => model.findAndCountAll({
   where,
   attributes: attributes as FindAttributeOptions<T>,
   include,
-  offset: typeof page === "undefined" ? page : (page - 1) * (limit || 5),
+  offset: typeof page === "undefined" ? page : (page - 1) * (limit || 10),
   order: order || [['id', 'DESC']],
-  limit
+  limit: limit || 10
 });
 
 export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate, transaction }: PropsBulkCreate<T>) => {
@@ -56,3 +57,5 @@ export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate,
 };
 
 export const deleteModel = <T extends {}>({ model, where, transaction }: PropsDeleteModel<T>) => model.destroy({ where, transaction });
+
+export const incrementModel = <T extends {}>({ model, where, transaction, by, key }: PropsIncrementModel<T>) => model.increment(key, { where, by, transaction });

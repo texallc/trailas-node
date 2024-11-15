@@ -6,14 +6,14 @@ import isSuperAdmin from "../middlewares/isSuperAdmin";
 const router = Router();
 
 const RouteUser = (app: Application) => {
-  router.get('/list', isSuperAdmin, paginatedList);
+  router.get('/list', paginatedList);
   router.get('/get-by-uid', getByUid);
   router.post('/create', create);
   router.put('/update', update);
   router.patch('/update', updateOnlyDb);
   router.delete('/delete', update);
 
-  app.use("/usuarios", [isAuthenticated], router);
+  app.use("/usuarios", [isAuthenticated, isSuperAdmin], router);
 };
 
 export default RouteUser;

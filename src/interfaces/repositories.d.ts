@@ -18,6 +18,8 @@ export interface PropsFindOneModel<T extends {}> {
   attributes?: FindAttributeOptions<T> | (keyof T)[];
   where?: WhereOptions<T>;
   include?: Includeable | Includeable[];
+  transaction?: Transaction;
+  lock?: Lock | { level: Lock; of: ModelStatic<Model>; } | boolean;
 }
 
 export interface PropsFindByPrimaryKeyModel<T extends {}> {
@@ -49,5 +51,13 @@ export interface PropsBulkCreate<T extends {}> {
 export interface PropsDeleteModel<T extends {}> {
   model: ModelStatic<Model<T, T>>,
   where: WhereOptions<T>;
+  transaction?: Transaction;
+}
+
+export interface PropsIncrementModel<T extends {}> {
+  model: ModelStatic<Model<T, T>>,
+  where: WhereOptions<T>;
+  by: number;
+  key: keyof T;
   transaction?: Transaction;
 }

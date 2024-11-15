@@ -11,7 +11,7 @@ const RouteInventory = (app: Application) => {
   router.get("/list-by-branch-office", isAdminBranchOffice, paginatedListBranchOffice);
   router.patch('/update', isSuperAdmin, update);
 
-  app.use("/inventarios", isAuthenticated, router);
+  app.use("/inventarios", [isAuthenticated], router);
 };
 
 export default RouteInventory;

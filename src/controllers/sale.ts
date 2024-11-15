@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
 import { clearSearchQuery } from "../utils/functions";
-import { createSaleService, paginatedListService, updateSaleService } from "../services/sale";
+import { createSaleService, paginatedListService } from "../services/sale";
 import { Sale } from "../interfaces/sale";
+import { Cart } from "../interfaces/cart";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
@@ -18,23 +19,11 @@ export const paginatedList: RequestHandler = async (req, res) => {
 
 export const create: RequestHandler = async (req, res) => {
   try {
-    const body = req.body as Sale;
+    const body = req.body as Cart;
 
     const sale = await createSaleService(body);
 
     res.status(201).json(sale);
-  } catch (error) {
-    handleError(res, error);
-  }
-};
-
-export const update: RequestHandler = async (req, res) => {
-  try {
-    const body = req.body as Partial<Sale>;
-
-    const sale = await updateSaleService(body);
-
-    res.status(200).json(sale);
   } catch (error) {
     handleError(res, error);
   }

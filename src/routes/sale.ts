@@ -1,15 +1,15 @@
 import { Application, Router } from "express";
-import { create, paginatedList, update } from "../controllers/sale";
+import { create, paginatedList } from "../controllers/sale";
+import isAuthenticated from "../middlewares/auth";
+import isSuperAdmin from "../middlewares/isSuperAdmin";
 
 const router = Router();
 
 const RouteSale = (app: Application) => {
   router.get('/list', paginatedList);
   router.post('/create', create);
-  router.put('/update', update);
-  router.delete('/delete', update);
 
-  app.use("/ventas", router);
+  app.use("/ventas", [isAuthenticated, isSuperAdmin], router);
 };
 
 export default RouteSale;
