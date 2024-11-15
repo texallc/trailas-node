@@ -1,31 +1,46 @@
-import { Inventory } from "../interfaces/inventory";
-import { PaginatedListServiceProps } from "../interfaces/userService";
 import InventoryModel from "../models/inventory";
-import TotalTablesModel from "../models/totalTable";
-import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import { Inventory } from "../interfaces/inventory";
+import { findAndCountModel, updateModel } from "../repositories";
+import { PaginatedListServiceProps } from "../types/services";
+import ProductModel from "../models/product";
 
-export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
+export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Inventory>) => {
   try {
-    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: InventoryModel, page, limit });
+    const { count, rows } = await findAndCountModel({
+      model: InventoryModel, page, limit, include: ["product", "user"]
+    });
 
-    const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
-
-    return { list: list.map(d => d.dataValues), total: totalList?.dataValues.total || 0 };
+    return { list: rows.map(d => d.dataValues), total: count };
   } catch (error) {
     throw error;
   }
 };
 
-export const createInventoryService = (inventory: Inventory) =>
-  createIncrementModel({
-    model: InventoryModel,
-    data: { ...inventory, id: 0 },
-    where: { tableName: "inventories" },
-  })
+export const paginatedListBranchOfficeService = async ({ pagina: page, limite: limit, userId }: PaginatedListServiceProps<Inventory>) => {
+  try {
+    const { count, rows } = await findAndCountModel({
+      where: { userId },
+      model: InventoryModel,
+      page,
+      limit,
+      include: [
+        {
+          model: ProductModel,
+          as: "product",
+          include: "category"
+        },
+        "user"
+      ]
+    });
 
-export const updateInventoryService = (inventory: Partial<Inventory>) =>
-  updateModel({ model: InventoryModel, data: inventory, where: { id: inventory.id } })
+    return { list: rows.map(d => d.dataValues), total: count };
+  } catch (error) {
+    throw error;
+  }
+};
 
-export const updateStatusInventoryService = (id: number, active: boolean) =>
-  updateModel({ model: InventoryModel, data: { id, active }, where: { id } })
+export const updateInventoryService = async (inventory: Partial<Inventory>) => updateModel({
+  model: InventoryModel,
+  data: inventory,
+  where: { id: inventory.id },
+});

@@ -15,7 +15,7 @@ export const stringLength: Length = {
 } as const;
 
 export const rfcLength: Length = {
-  args: [13, 13],
+  args: [0, 13],
   msg: "El RFC tiene que ser de 13 caracteres."
 } as const;
 
@@ -51,15 +51,17 @@ export const maxStock: Max = {
 
 export const minStock: Min = {
   args: [0],
-  msg: "El stock mínimo es de 0."
+  msg: "El stock del producto llego a 0."
 } as const;
 
 export const roleLength: Length = {
   args: [8, 22],
   msg: "Los caracteres permitidos son inválidos."
-} as const
+} as const;
 
 export const typeMovementLength: Length = {
   args: [6, 7],
   msg: "Los caracteres permitidos son inválidos."
 } as const;
+
+export const filterKeys = ["pagina", "limite", "id", "name", "uid", "email", "phone", "role", "userId"];

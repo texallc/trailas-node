@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
-import { getClearQueryString } from "../utils/functions";
+import { clearSearchQuery } from "../utils/functions";
 import { createProductService, paginatedListService, updateProductService } from "../services/product";
 import { Product } from "../interfaces/product";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const { page, limit } = getClearQueryString(req.query);
+    const query = clearSearchQuery<Product>(req.query);
 
-    const { list, total } = await paginatedListService({ page: +page, limit: +limit });
+    const { list, total } = await paginatedListService(query);
 
     res.status(200).json({ list, total });
   } catch (error) {

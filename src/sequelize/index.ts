@@ -4,9 +4,7 @@ import CategoryModel from "../models/category";
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
 import ProductModel from "../models/product";
-import ProductInventory from "../models/productInventory";
 import UserModel from "../models/user";
-import TotalTablesModel from "../models/totalTable";
 import SaleModel from '../models/sale';
 import SaleDetailsModel from '../models/saleDetails';
 
@@ -23,8 +21,7 @@ const sequelize = new Sequelize({
   database,
   host,
   port,
-
-  models: [CategoryModel, ProductModel, InventoryModel, ProductInventory, MovementModel, UserModel, TotalTablesModel, SaleModel, SaleDetailsModel],
+  models: [CategoryModel, ProductModel, InventoryModel, MovementModel, UserModel, SaleModel, SaleDetailsModel],
 });
 
 export default sequelize;

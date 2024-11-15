@@ -6,14 +6,14 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, BelongsToMany, Table, BelongsTo, NotNull, HasMany, Unique, AllowNull } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, Table, BelongsTo, NotNull, HasMany, Unique, AllowNull } from '@sequelize/core/decorators-legacy';
 import { Len, Max, Min } from '@sequelize/validator.js';
 import { Product } from '../interfaces/product';
 import { maxPrice, minPrice, stringLargeLength, stringLength } from '../constants/constants';
 import CategoryModel from './category';
 import InventoryModel from './inventory';
-import ProductInventoryModel from './productInventory';
 import SaleDetailsModel from './saleDetails';
+import { TypeUnit } from '../types';
 
 @Table({ tableName: 'products' })
 class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAttributes<ProductModel>> implements Product {
@@ -45,13 +45,16 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
-  @NotNull
+  @Default("")
   declare brand: string;
 
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
   @AllowNull
-  @Unique
+  @Unique({
+    name: 'partNumber',
+    msg: 'El numero de parte ya existe'
+  })
   declare partNumber: string | null;
 
   @Attribute(DataTypes.BOOLEAN)
@@ -61,7 +64,7 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @Attribute(DataTypes.STRING)
   @Len(stringLength)
   @Default("")
-  declare unitType: string;
+  declare unitType: TypeUnit;
 
   @Attribute(DataTypes.INTEGER)
   @NotNull
@@ -70,11 +73,7 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @BelongsTo(() => CategoryModel, 'categoryId')
   declare category: NonAttribute<CategoryModel>;
 
-  @BelongsToMany(() => InventoryModel, {
-    through: ProductInventoryModel,
-    foreignKey: 'productId',
-    otherKey: 'inventoryId'
-  })
+  @HasMany(() => InventoryModel, /* foreign key */ 'productId')
   declare inventories?: NonAttribute<InventoryModel[]>;
 
   @HasMany(() => SaleDetailsModel, 'productId')

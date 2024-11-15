@@ -1,86 +1,85 @@
 
 import { Product } from "../interfaces/product";
-import { PaginatedListServiceProps } from "../interfaces/userService";
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
 import ProductModel from "../models/product";
-import ProductInventoryModel from "../models/productInventory";
-import TotalTablesModel from "../models/totalTable";
-import { createIncrementModel, createModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import { createModel, findAndCountModel, updateModel } from "../repositories";
 import sequelize from "../sequelize";
+import { PaginatedListServiceProps } from "../types/services";
 import { handleErrorFunction } from "../utils/handleError";
 
-export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
+export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Product>) => {
   try {
-    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: ProductModel, page, limit });
+    const { count, rows } = await findAndCountModel({
+      model: ProductModel,
+      page,
+      limit,
+      include: [
+        "category",
+        {
+          model: InventoryModel,
+          as: "inventories",
+          include: "user"
+        }
+      ]
+    });
 
-    const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
-
-    return { list: list.map(d => d.dataValues), total: totalList?.dataValues.total || 0 };
+    return { list: rows, total: count };
   } catch (error) {
     throw handleErrorFunction(error);
   }
 };
 
 export const createProductService = async (product: Product) => {
-  const userId = global.user?.id!
+  const userAuthId = global.user?.id!;
+  const userIds = product.userIds;
+  delete product.userIds;
+
   const transaction = await sequelize.startUnmanagedTransaction();
 
   try {
-    const inventoryPromise = createIncrementModel({
-      model: InventoryModel,
-      data: { stock: product.stock || 0, active: true, userId },
-      where: { tableName: "inventories" },
-      transaction
-    })
-
-    const productPromise = createIncrementModel({
+    const newProduct = await createModel({
       model: ProductModel,
       data: product,
-      where: { tableName: "products" },
       transaction
-    })
+    });
 
-    const [inventoryCreated, productCreated] = await Promise.all([inventoryPromise, productPromise])
+    if (userIds?.length) {
+      const newInventories = await Promise.all(userIds.map(userId => {
+        return createModel({
+          model: InventoryModel,
+          data: { stock: product.stock || 0, userId, productId: newProduct.dataValues.id! },
+          transaction
+        });
+      }));
 
-    const inventoryId = inventoryCreated.dataValues.id!
-
-    const productInventoryPromise = createModel({
-      model: ProductInventoryModel,
-      data: { inventoryId, productId: productCreated.dataValues.id! },
-      transaction
-    })
-
-    const arrayPromise: Promise<unknown>[] = [productInventoryPromise]
-
-    if (product.stock) {
-      const movementPromise = createIncrementModel({
-        model: MovementModel,
-        data: {
-          id: 0,
-          typeMovement: "Entrada",
-          quantity: product.stock || 0,
-          inventoryId,
-          userId
-        },
-        where: { tableName: "movements" },
-        transaction
-      })
-
-      arrayPromise.push(movementPromise)
+      if (product.stock) {
+        await Promise.all(newInventories.map(({ dataValues: { id, userId } }) => {
+          return createModel({
+            model: MovementModel,
+            data: {
+              typeMovement: "Entrada",
+              quantity: product.stock!,
+              inventoryId: id!,
+              userId: userAuthId
+            },
+            transaction
+          });
+        }));
+      }
     }
 
-    await Promise.all(arrayPromise)
-    await transaction.commit()
+    await transaction.commit();
+
+    return newProduct;
   } catch (error) {
     await transaction.rollback();
     throw handleErrorFunction(error);
   }
-}
+};
 
-export const updateProductService = (product: Partial<Product>) =>
-  updateModel({ model: ProductModel, data: product, where: { id: product.id } })
-
-export const updateStatusProductService = (id: number, active: boolean) =>
-  updateModel({ model: ProductModel, data: { id, active }, where: { id } })
+export const updateProductService = async (product: Partial<Product>) => updateModel({
+  model: ProductModel,
+  data: product,
+  where: { id: product.id },
+});

@@ -26,7 +26,7 @@ const isAuthenticated: RequestHandler = async (req, res, next) => {
     const decodedToken: auth.DecodedIdToken = await verifyIdToken(token);
     const { uid } = decodedToken;
 
-    const user = await findOneModel({ model: UserModel, attributes: ["uid"], where: { uid } });
+    const user = await findOneModel({ model: UserModel, where: { uid } });
 
     if (!user) {
       unauthorized(res);

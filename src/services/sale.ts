@@ -1,87 +1,149 @@
 
+import { Cart } from "../interfaces/cart";
 import { Movement } from "../interfaces/movement";
-import { Product } from "../interfaces/product";
 import { Sale } from "../interfaces/sale";
-import { PaginatedListServiceProps } from "../interfaces/userService";
+import { SalesDetail } from "../interfaces/saleDetails";
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
+import ProductModel from "../models/product";
 import SaleModel from "../models/sale";
 import SaleDetailsModel from "../models/saleDetails";
-import TotalTablesModel from "../models/totalTable";
-import { bulkCreateIncrementModel, createIncrementModel, findAllModel, findByPrimaryKeyModel, findOneModel } from "../repositories";
+import UserModel from "../models/user";
+import { bulkCreate, createModel, findAndCountModel, findOneModel, incrementModel } from "../repositories";
 import sequelize from "../sequelize";
+import { PaginatedListServiceProps } from "../types/services";
 import { handleErrorFunction } from "../utils/handleError";
 import { Lock } from "@sequelize/core";
 
-export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
+export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Sale>) => {
   try {
-    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: SaleModel, page, limit });
+    const { count, rows } = await findAndCountModel({
+      model: SaleModel,
+      page,
+      limit,
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: UserModel,
+          as: "buyer",
+          attributes: ["id", "name", "email"]
+        },
+        {
+          model: UserModel,
+          as: "seller",
+          attributes: ["id", "name", "email"]
+        },
+        {
+          model: SaleDetailsModel,
+          as: "details",
+          include: {
+            model: ProductModel,
+            as: "product",
+            attributes: ["id", "name", "price", "image"]
+          }
+        }
+      ],
+    });
 
-    const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
-
-    return { list: list.map(d => d.dataValues), total: totalList?.dataValues.total || 0 };
+    return { list: rows.map(d => d.dataValues), total: count };
   } catch (error) {
     throw handleErrorFunction(error);
   }
 };
 
-export const createSaleService = async (sale: Sale) => {
+export const createSaleService = async ({ taxes, discount, subtotal, total, products }: Cart) => {
   const transaction = await sequelize.startUnmanagedTransaction();
-  const userId = global.user?.id!
 
   try {
-    const newSale = await createIncrementModel({
+    const userId = global.user?.id!;
+
+    const buyer = await findOneModel({
+      model: UserModel,
+      where: { email: "sincomprador@trailas.com" },
+      transaction
+    });
+
+    if (!buyer) {
+      throw new Error("Usuario sin comprador no encontrado");
+    }
+
+    const newSale = await createModel({
       model: SaleModel,
-      data: { ...sale, sellerId: userId },
-      where: { tableName: "sales" },
+      data: {
+        taxes,
+        discount,
+        subtotal,
+        total,
+        sellerId: userId,
+        buyerId: buyer.dataValues.id!,
+        status: "Normal",
+      },
       transaction
-    })
+    });
 
-    const saleId = newSale.dataValues.id!
+    const saleId = newSale.dataValues.id!;
 
-    const createSaleDetailsPromise = bulkCreateIncrementModel({
+    const createSaleDetailsPromise = bulkCreate({
       model: SaleDetailsModel,
-      data: sale.details.map(d => ({ ...d, saleId })),
-      where: { tableName: "saleDetails" },
-      transaction
-    })
+      data: products.map(p => {
+        const salesDetail: SalesDetail = {
+          saleId,
+          productId: p.productId,
+          quantity: p.quantity,
+          price: p.price
+        };
 
-    const movmentPromises = sale.details.map(async d => {
-      const inventory = (await findByPrimaryKeyModel({
+        return salesDetail;
+      }),
+      transaction
+    });
+
+    const movementPromises = products.map(async p => {
+      const inventory = (await findOneModel({
         model: InventoryModel,
-        primaryKey: (d.product as Product).inventoryId!,
+        where: { productId: p.productId },
         transaction,
         lock: Lock.UPDATE
-      }))?.dataValues
+      }))?.dataValues;
 
       if (!inventory) {
-        throw new Error(`Inventario del producto: ${d.product.name} no encontrado`)
+        throw new Error(`Inventario del producto: ${p.productId} no encontrado`);
       }
 
-      if (d.quantity > inventory.stock) {
-        throw new Error(`Stock insuficiente para el producto: ${d.product.name}`)
+      if (p.quantity > inventory.stock) {
+        throw new Error(`Stock insuficiente para el producto: ${p.productId}`);
       }
 
-      const movment: Movement = {
+      const movement: Movement = {
         typeMovement: "Salida",
-        quantity: d.quantity,
+        quantity: p.quantity,
         userId,
-        inventoryId: (d.product as Product).inventoryId!
-      }
-      return movment
-    })
+        inventoryId: inventory.id!,
+      };
 
-    const createMovementaPromise = bulkCreateIncrementModel({
+      await incrementModel({
+        model: InventoryModel,
+        where: { productId: p.productId },
+        by: -p.quantity,
+        key: "stock",
+        transaction
+      });
+
+      return movement;
+    });
+
+    const createMovementPromise = bulkCreate({
       model: MovementModel,
-      data: await Promise.all(movmentPromises),
-      where: { tableName: "movements" },
+      data: await Promise.all(movementPromises),
       transaction
-    })
+    });
 
-    await Promise.all([createSaleDetailsPromise, createMovementaPromise])
-    await transaction.commit()
+    await Promise.all([createSaleDetailsPromise, createMovementPromise]);
+    await transaction.commit();
+
+    return newSale;
   } catch (error) {
+    await transaction.rollback();
     throw handleErrorFunction(error);
   }
 };

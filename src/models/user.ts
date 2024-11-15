@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany, NotNull } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Default, Unique, Table, HasMany, NotNull, AllowNull } from '@sequelize/core/decorators-legacy';
 import { IsEmail, Len } from '@sequelize/validator.js';
 import { User } from '../interfaces/user';
 import { isEmail, phoneLength, rfcLength, stringLargeLength, stringLength } from '../constants/constants';
@@ -24,12 +24,15 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @Attribute(DataTypes.STRING)
   @Unique
-  @NotNull
   @Len(stringLength)
   declare uid: string;
 
   @Attribute(DataTypes.STRING)
   @IsEmail(isEmail)
+  @Unique({
+    name: 'email',
+    msg: 'Ya existe un usuario con este email.'
+  })
   @Len(stringLength)
   @NotNull
   declare email: string;
@@ -39,7 +42,7 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @NotNull
   declare name: string;
 
-  @Attribute(DataTypes.INTEGER)
+  @Attribute(DataTypes.BIGINT)
   @Len(phoneLength)
   @Default(0)
   declare phone: number;
@@ -76,8 +79,8 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   declare salesBuyer?: NonAttribute<SaleModel[]>;
 
   @Attribute(DataTypes.STRING)
+  @AllowNull
   @Len(rfcLength)
-  @Default("")
   declare rfc: string;
 }
 
