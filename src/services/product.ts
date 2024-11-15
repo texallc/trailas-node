@@ -1,99 +1,85 @@
 
 import { Product } from "../interfaces/product";
-import { PaginatedListServiceProps } from "../interfaces/userService";
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
 import ProductModel from "../models/product";
-import TotalTablesModel from "../models/totalTable";
-import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import { createModel, findAndCountModel, updateModel } from "../repositories";
 import sequelize from "../sequelize";
+import { PaginatedListServiceProps } from "../types/services";
 import { handleErrorFunction } from "../utils/handleError";
 
-export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
+export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Product>) => {
   try {
-    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "products" } });
-    const listPromise = findAllModel({ model: ProductModel, page, limit, include: "category" });
+    const { count, rows } = await findAndCountModel({
+      model: ProductModel,
+      page,
+      limit,
+      include: [
+        "category",
+        {
+          model: InventoryModel,
+          as: "inventories",
+          include: "user"
+        }
+      ]
+    });
 
-    const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
-
-    return { list: list.map(d => d.dataValues), total: totalList?.dataValues.total || 0 };
+    return { list: rows, total: count };
   } catch (error) {
     throw handleErrorFunction(error);
   }
 };
 
 export const createProductService = async (product: Product) => {
-  const userId = global.user?.id!
+  const userAuthId = global.user?.id!;
+  const userIds = product.userIds;
+  delete product.userIds;
+
   const transaction = await sequelize.startUnmanagedTransaction();
 
   try {
-    const newProduct = await createIncrementModel({
+    const newProduct = await createModel({
       model: ProductModel,
       data: product,
-      where: { tableName: "products" },
       transaction
-    })
+    });
 
-    const mewInventory = await createIncrementModel({
-      model: InventoryModel,
-      data: { stock: product.stock || 0, userId, productId: newProduct.dataValues.id! },
-      where: { tableName: "inventories" },
-      transaction
-    })
+    if (userIds?.length) {
+      const newInventories = await Promise.all(userIds.map(userId => {
+        return createModel({
+          model: InventoryModel,
+          data: { stock: product.stock || 0, userId, productId: newProduct.dataValues.id! },
+          transaction
+        });
+      }));
 
-    if (product.stock) {
-      await createIncrementModel({
-        model: MovementModel,
-        data: {
-          typeMovement: "Entrada",
-          quantity: product.stock || 0,
-          inventoryId: mewInventory.dataValues.id!,
-          userId
-        },
-        where: { tableName: "movements" },
-        transaction
-      })
+      if (product.stock) {
+        await Promise.all(newInventories.map(({ dataValues: { id, userId } }) => {
+          return createModel({
+            model: MovementModel,
+            data: {
+              typeMovement: "Entrada",
+              quantity: product.stock!,
+              inventoryId: id!,
+              userId: userAuthId
+            },
+            transaction
+          });
+        }));
+      }
     }
 
-    await transaction.commit()
+    await transaction.commit();
 
     return newProduct;
   } catch (error) {
     await transaction.rollback();
     throw handleErrorFunction(error);
   }
-}
+};
 
-export const updateProductService = async (product: Partial<Product>) => {
-  const transaction = await sequelize.startUnmanagedTransaction();
-  try {
-    const updateProduct = await updateModel({
-      model: ProductModel,
-      data: product,
-      where: { id: product.id },
-      transaction
-    })
-    await transaction.commit();
-    return updateProduct;
-  } catch (error) {
-    await transaction.rollback();
-    throw handleErrorFunction(error);
-  }
-}
-
-export const updateStatusProductService = async (id: number, active: boolean) => {
-  const transaction = await sequelize.startUnmanagedTransaction();
-  try {
-    const updateSatatusProduct = await updateModel({
-      model: ProductModel,
-      data: { id, active },
-      where: { id },
-      transaction
-    })
-    await transaction.commit();
-    return updateSatatusProduct;
-  } catch (error) {
-    await transaction.rollback();
-    throw handleErrorFunction(error);
-  }
-}
+export const updateProductService = async (product: Partial<Product>) => updateModel({
+  model: ProductModel,
+  data: product,
+  where: { id: product.id },
+});

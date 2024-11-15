@@ -1,15 +1,14 @@
 import { Application, Router } from "express";
-import { create, paginatedList, update } from "../controllers/movement";
+import { paginatedList } from "../controllers/movement";
+import isAuthenticated from "../middlewares/auth";
+import isSuperAdmin from "../middlewares/isSuperAdmin";
 
 const router = Router();
 
 const RouteMovement = (app: Application) => {
   router.get('/list', paginatedList);
-  router.post('/create', create);
-  router.put('/update', update);
-  router.delete('/delete', update);
 
-  app.use("/movimientos", router);
+  app.use("/movimientos", [isAuthenticated, isSuperAdmin], router);
 };
 
 export default RouteMovement;

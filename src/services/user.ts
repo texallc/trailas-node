@@ -1,22 +1,31 @@
-import { PaginatedListServiceProps } from "../interfaces/userService";
-import TotalTablesModel from "../models/totalTable";
-import { createIncrementModel, findAllModel, findOneModel, updateModel } from "../repositories";
+import { createModel, findAndCountModel, findOneModel, updateModel } from "../repositories";
 import UserModel from "../models/user";
 import { User } from "../interfaces/user";
-import { createUserAuth, deleteUserAuth, updateUserAuth } from "../repositories/firebaseAuth";
+import { createUserAuth, deleteUserAuth, getUserAuthByUid, updateUserAuth } from "../repositories/firebaseAuth";
 import { handleErrorFunction } from "../utils/handleError";
 import sequelize from "../sequelize";
+import { PaginatedListServiceProps } from "../types/services";
+import { getClearWhere } from "../utils/functions";
 
-export const paginatedListService = async ({ page, limit }: PaginatedListServiceProps) => {
+export const paginatedListService = async ({ pagina: page, limite: limit, ...query }: PaginatedListServiceProps<User>) => {
   try {
-    const totalListPromise = findOneModel({ model: TotalTablesModel, where: { tableName: "users" } });
-    const listPromise = findAllModel({ model: UserModel, page, limit });
+    const where = getClearWhere(query);
 
-    const [totalList, list] = await Promise.all([totalListPromise, listPromise]);
+    const { count, rows } = await findAndCountModel({ model: UserModel, where, page, limit });
 
-    return { list: list.map(d => d.dataValues), total: totalList?.dataValues.total || 0 };
+    return { list: rows.map(d => d.dataValues), total: count };
   } catch (error) {
     throw error;
+  }
+};
+
+export const getByUidService = async (uid: string) => {
+  try {
+    const user = await findOneModel({ model: UserModel, where: { uid } });
+
+    return user?.dataValues;
+  } catch (error) {
+    throw handleErrorFunction(error);
   }
 };
 
@@ -24,7 +33,7 @@ export const createUserService = async (user: User) => {
   let uid: string = "";
 
   try {
-    const { uid: _uid } = await createUserAuth({ email: user.email, password: user.password });
+    const { uid: _uid } = await createUserAuth({ email: user.email, password: user.password, displayName: user.role });
 
     uid = _uid;
   } catch (error) {
@@ -32,10 +41,9 @@ export const createUserService = async (user: User) => {
   }
 
   try {
-    const newUser = await createIncrementModel({
+    const newUser = await createModel({
       model: UserModel,
       data: { ...user, uid },
-      where: { tableName: "users" },
     });
 
     return newUser.dataValues;
@@ -54,10 +62,13 @@ export const updateUserService = async (user: Partial<User>) => {
   const transaction = await sequelize.startUnmanagedTransaction();
 
   try {
-    await updateModel({ model: UserModel, data: user, where: { id }, transaction });
+    const userAuthPromise = getUserAuthByUid(uid!);
+    const updateModelPromise = updateModel({ model: UserModel, data: user, where: { id }, transaction });
 
-    if (email || password) {
-      await updateUserAuth(uid!, { email, password });
+    const [userAuth] = await Promise.all([userAuthPromise, updateModelPromise]);
+
+    if (userAuth.email !== email || password) {
+      await updateUserAuth(uid!, password ? { email, password } : { email });
     }
 
     await transaction.commit();
@@ -67,19 +78,12 @@ export const updateUserService = async (user: Partial<User>) => {
   }
 };
 
-export const updateStatusUserService = async (id: number, active: boolean) => {
-  const transaction = await sequelize.startUnmanagedTransaction();
+export const updateUserOnlyBdService = async (user: Partial<User>) => {
+  const { id } = user;
+
   try {
-    const updateSatusUser = await updateModel({
-      model: UserModel,
-      data: { id, active },
-      where: { id },
-      transaction
-    });
-    await transaction.commit();
-    return updateSatusUser;
+    await updateModel({ model: UserModel, data: user, where: { id } });
   } catch (error) {
-    await transaction.rollback();
     throw handleErrorFunction(error);
   }
 };

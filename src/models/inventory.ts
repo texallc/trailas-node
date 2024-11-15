@@ -34,12 +34,12 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @BelongsTo(() => ProductModel, 'productId')
   declare product: NonAttribute<ProductModel>;
 
-  @BelongsTo(() => UserModel, 'userId')
-  declare user: NonAttribute<UserModel>;
-
   @Attribute(DataTypes.INTEGER)
   @NotNull
   declare userId: number;
+
+  @BelongsTo(() => UserModel, 'userId')
+  declare user: NonAttribute<UserModel>;
 
   @HasMany(() => MovementModel, 'inventoryId')
   declare movements?: NonAttribute<MovementModel[]>;

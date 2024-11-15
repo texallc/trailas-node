@@ -1,16 +1,17 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 import { unauthorized } from "../utils/handleError";
 
-const isSuperAdmin = async (_: Request, res: Response, next: NextFunction) => {
+const isSuperAdmin: RequestHandler = (_, res, next) => {
   try {
     if (global.user?.role !== "Super Admin") {
-      return unauthorized(res);
+      unauthorized(res);
+      return;
     }
 
-    return next();
+    next();
   } catch (err) {
     console.error(err);
-    return unauthorized(res);
+    unauthorized(res);
   }
 };
 

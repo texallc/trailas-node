@@ -29,6 +29,10 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
 
   @Attribute(DataTypes.STRING)
   @IsEmail(isEmail)
+  @Unique({
+    name: 'email',
+    msg: 'Ya existe un usuario con este email.'
+  })
   @Len(stringLength)
   @NotNull
   declare email: string;

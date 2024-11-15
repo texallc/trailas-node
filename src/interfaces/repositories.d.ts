@@ -1,5 +1,4 @@
 import { FindAttributeOptions, ModelStatic, Model, WhereOptions, Includeable, Order, Transaction, Lock } from "@sequelize/core";
-import { TotalTables } from "./totalTables";
 
 export interface PropsCreateModel<T extends {}> {
   model: ModelStatic<Model<T, T>>;
@@ -19,6 +18,8 @@ export interface PropsFindOneModel<T extends {}> {
   attributes?: FindAttributeOptions<T> | (keyof T)[];
   where?: WhereOptions<T>;
   include?: Includeable | Includeable[];
+  transaction?: Transaction;
+  lock?: Lock | { level: Lock; of: ModelStatic<Model>; } | boolean;
 }
 
 export interface PropsFindByPrimaryKeyModel<T extends {}> {
@@ -53,8 +54,10 @@ export interface PropsDeleteModel<T extends {}> {
   transaction?: Transaction;
 }
 
-export interface PropsIncrementModel {
-  where: Partial<TotalTables>;
+export interface PropsIncrementModel<T extends {}> {
+  model: ModelStatic<Model<T, T>>,
+  where: WhereOptions<T>;
+  by: number;
+  key: keyof T;
   transaction?: Transaction;
-  by?: number;
 }
