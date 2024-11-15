@@ -22,7 +22,9 @@ const sequelize = new Sequelize({
   host,
   port,
   models: [CategoryModel, ProductModel, InventoryModel, MovementModel, UserModel, SaleModel, SaleDetailsModel],
-  ssl: true,
+  ssl: {
+    rejectUnauthorized: false
+  },
 });
 
 export default sequelize;
