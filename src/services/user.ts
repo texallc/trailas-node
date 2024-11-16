@@ -57,7 +57,7 @@ export const createUserService = async (user: User) => {
 };
 
 export const updateUserService = async (user: Partial<User>) => {
-  const { id, email, password, uid } = user;
+  const { id, email, password, uid, role } = user;
 
   const transaction = await sequelize.startUnmanagedTransaction();
 
@@ -67,8 +67,8 @@ export const updateUserService = async (user: Partial<User>) => {
 
     const [userAuth] = await Promise.all([userAuthPromise, updateModelPromise]);
 
-    if (userAuth.email !== email || password) {
-      await updateUserAuth(uid!, password ? { email, password } : { email });
+    if (userAuth.displayName !== role || userAuth.email !== email || password) {
+      await updateUserAuth(uid!, password ? { displayName: role, email, password } : { displayName: role, email });
     }
 
     await transaction.commit();
