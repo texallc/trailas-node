@@ -19,7 +19,8 @@
   },
   "compileOnSave": true,
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/sequelize/ca-certificate.crt"
   ],
   "exclude": [
     "node_module"
