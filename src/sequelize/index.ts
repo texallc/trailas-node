@@ -14,7 +14,10 @@ const database = process.env.DB_NAME;
 const host = process.env.DB_HOST;
 const port = Number(process.env.DB_PORT || 5432);
 const ca = process.env.DB_CA || "";
-const env = process.env.NODE_ENV?.replace(/\\n/g, '\n');
+const env = process.env.NODE_ENV!.replace(/\\n/g, '\n');
+
+console.log("ca---->", ca);
+console.log("db---->", database);
 
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
@@ -27,8 +30,8 @@ const sequelize = new Sequelize({
   ssl: env === "dev"
     ? undefined
     : {
-      ca
-    },
+      ca,
+    }
 });
 
 export default sequelize;
