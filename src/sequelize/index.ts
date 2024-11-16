@@ -22,6 +22,11 @@ const port = Number(process.env.DB_PORT || 5432);
 const pathCa = process.env.DB_PATH_CA || "";
 const env = process.env.NODE_ENV;
 
+const ca = readFileSync(join(__dirname, pathCa)).toString();
+
+console.log("ca =====>", ca);
+console.log("database =====>", database);
+
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
   user: username,
@@ -33,7 +38,7 @@ const sequelize = new Sequelize({
   ssl: env === "dev"
     ? undefined
     : {
-      ca: readFileSync(join(__dirname, pathCa)).toString(),
+      ca
     },
 });
 
