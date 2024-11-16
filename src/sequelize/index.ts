@@ -14,7 +14,7 @@ const database = process.env.DB_NAME;
 const host = process.env.DB_HOST;
 const port = Number(process.env.DB_PORT || 5432);
 const ca = process.env.DB_CA || "";
-const env = process.env.NODE_ENV;
+const env = process.env.NODE_ENV?.replace(/\\n/g, '\n');
 
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
