@@ -16,9 +16,6 @@ const port = Number(process.env.DB_PORT || 5432);
 const ca = process.env.DB_CA || "";
 const env = process.env.NODE_ENV!.replace(/\\n/g, '\n');
 
-console.log("ca---->", ca);
-console.log("db---->", database);
-
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
   user: username,
