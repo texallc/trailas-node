@@ -31,6 +31,7 @@ const sequelize = new Sequelize({
     ? undefined
     : {
       ca,
+      rejectUnauthorized: false,
     }
 });
 
