@@ -13,4 +13,5 @@ export interface Inventory {
   product: Product | NonAttribute<ProductModel>;
   user: User | NonAttribute<UserModel>;
   userId: number;
+  addStock?: number;
 }

@@ -9,7 +9,7 @@ const router = Router();
 const RouteInventory = (app: Application) => {
   router.get('/list', isSuperAdmin, paginatedList);
   router.get("/list-by-branch-office", isAdminBranchOffice, paginatedListBranchOffice);
-  router.patch('/update', isSuperAdmin, update);
+  router.put('/update', isSuperAdmin, update);
 
   app.use("/inventarios", [isAuthenticated], router);
 };

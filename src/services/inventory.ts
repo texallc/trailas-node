@@ -1,8 +1,10 @@
 import InventoryModel from "../models/inventory";
 import { Inventory } from "../interfaces/inventory";
-import { findAndCountModel, updateModel } from "../repositories";
+import { createModel, findAndCountModel, incrementModel } from "../repositories";
 import { PaginatedListServiceProps } from "../types/services";
 import ProductModel from "../models/product";
+import sequelize from "../sequelize";
+import MovementModel from "../models/movement";
 
 export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Inventory>) => {
   try {
@@ -39,8 +41,36 @@ export const paginatedListBranchOfficeService = async ({ pagina: page, limite: l
   }
 };
 
-export const updateInventoryService = async (inventory: Partial<Inventory>) => updateModel({
-  model: InventoryModel,
-  data: inventory,
-  where: { id: inventory.id },
-});
+export const updateInventoryService = async (inventory: Partial<Inventory>) => {
+  const transaction = await sequelize.startUnmanagedTransaction();
+  const addStock = inventory.addStock!;
+
+  try {
+    const updateInventoryPromise = incrementModel({
+      model: InventoryModel,
+      where: { id: inventory.id },
+      by: addStock,
+      key: "stock",
+      transaction
+    });
+
+
+    const updateMovementPromise = createModel({
+      model: MovementModel,
+      data: {
+        inventoryId: inventory.id!,
+        userId: inventory.userId!,
+        quantity: Math.abs(addStock),
+        typeMovement: addStock > 0 ? "Entrada" : "Salida"
+      },
+      transaction
+    });
+
+    await Promise.all([updateInventoryPromise, updateMovementPromise]);
+
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
