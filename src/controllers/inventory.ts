@@ -44,9 +44,9 @@ export const update: RequestHandler = async (req, res) => {
   try {
     const body = req.body as Partial<Inventory>;
 
-    const inventory = await updateInventoryService(body);
+    await updateInventoryService(body);
 
-    res.status(200).json(inventory);
+    res.status(200).json({ message: "Inventario actualizado." });
   } catch (error) {
     handleError(res, error);
   }

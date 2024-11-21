@@ -30,8 +30,8 @@ export const maxPrice: Max = {
 } as const;
 
 export const minPrice: Min = {
-  args: [0],
-  msg: "El precio mínimo es de 0."
+  args: [0.01],
+  msg: "El precio mínimo es de 0.01"
 } as const;
 
 export const maxDiscount: Max = {
@@ -45,7 +45,7 @@ export const minDiscount: Min = {
 } as const;
 
 export const maxStock: Max = {
-  args: [999999],
+  args: [999_999],
   msg: "El stock máximo es de 999,999."
 } as const;
 
