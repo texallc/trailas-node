@@ -17,6 +17,7 @@ import { Lock } from "@sequelize/core";
 
 export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Sale>) => {
   try {
+    //cambiar el order by opr el id ya que esta indexado.
     const { count, rows } = await findAndCountModel({
       model: SaleModel,
       page,
@@ -39,7 +40,7 @@ export const paginatedListService = async ({ pagina: page, limite: limit }: Pagi
           include: {
             model: ProductModel,
             as: "product",
-            attributes: ["id", "name", "price", "image"]
+            attributes: ["id", "name", "price", "image", "partNumber"]
           }
         }
       ],

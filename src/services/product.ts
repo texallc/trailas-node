@@ -1,4 +1,6 @@
 
+import { ModelStatic } from "@sequelize/core";
+import { updateImage } from ".";
 import { Product } from "../interfaces/product";
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
@@ -34,6 +36,12 @@ export const createProductService = async (product: Product) => {
   const userAuthId = global.user?.id!;
   const userIds = product.userIds;
   delete product.userIds;
+
+  try {
+    await updateImage(product as Required<Product>, ProductModel as ModelStatic);
+  } catch (error) {
+    throw handleErrorFunction(error);
+  }
 
   const transaction = await sequelize.startUnmanagedTransaction();
 
@@ -78,8 +86,16 @@ export const createProductService = async (product: Product) => {
   }
 };
 
-export const updateProductService = async (product: Partial<Product>) => updateModel({
-  model: ProductModel,
-  data: product,
-  where: { id: product.id },
-});
+export const updateProductService = async (product: Partial<Product>) => {
+  try {
+    await updateImage(product as Required<Product>, ProductModel as ModelStatic);
+  } catch (error) {
+    throw handleErrorFunction(error);
+  }
+
+  return updateModel({
+    model: ProductModel,
+    data: product,
+    where: { id: product.id },
+  });
+};

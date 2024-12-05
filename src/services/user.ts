@@ -6,6 +6,8 @@ import { handleErrorFunction } from "../utils/handleError";
 import sequelize from "../sequelize";
 import { PaginatedListServiceProps } from "../types/services";
 import { getClearWhere } from "../utils/functions";
+import { updateImage } from ".";
+import { ModelStatic } from "@sequelize/core";
 
 export const paginatedListService = async ({ pagina: page, limite: limit, ...query }: PaginatedListServiceProps<User>) => {
   try {
@@ -33,6 +35,12 @@ export const createUserService = async (user: User) => {
   let uid: string = "";
 
   try {
+    await updateImage(user as Required<User>, UserModel as ModelStatic);
+  } catch (error) {
+    throw handleErrorFunction(error);
+  }
+
+  try {
     const { uid: _uid } = await createUserAuth({ email: user.email, password: user.password, displayName: user.role });
 
     uid = _uid;
@@ -57,7 +65,13 @@ export const createUserService = async (user: User) => {
 };
 
 export const updateUserService = async (user: Partial<User>) => {
-  const { id, email, password, uid, role } = user;
+  let { id, email, password, uid, role } = user;
+
+  try {
+    await updateImage(user as Required<User>, UserModel as ModelStatic);
+  } catch (error) {
+    throw handleErrorFunction(error);
+  }
 
   const transaction = await sequelize.startUnmanagedTransaction();
 

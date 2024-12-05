@@ -1,7 +1,10 @@
+import { ModelStatic } from "@sequelize/core";
+import { updateImage } from ".";
 import { Category } from "../interfaces/category";
 import CategoryModel from "../models/category";
 import { createModel, findAndCountModel, updateModel } from "../repositories";
 import { PaginatedListServiceProps } from "../types/services";
+import { handleErrorFunction } from "../utils/handleError";
 
 export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Category>) => {
   try {
@@ -13,13 +16,29 @@ export const paginatedListService = async ({ pagina: page, limite: limit }: Pagi
   }
 };
 
-export const createCategoryService = async (category: Category) => createModel({
-  model: CategoryModel,
-  data: category,
-});
+export const createCategoryService = async (category: Category) => {
+  try {
+    await updateImage(category as Required<Category>, CategoryModel as ModelStatic);
+  } catch (error) {
+    throw handleErrorFunction(error);
+  }
 
-export const updateCategoryService = (category: Partial<Category>) => updateModel({
-  model: CategoryModel,
-  data: category,
-  where: { id: category.id },
-});
+  return createModel({
+    model: CategoryModel,
+    data: category,
+  });
+};
+
+export const updateCategoryService = async (category: Partial<Category>) => {
+  try {
+    await updateImage(category as Required<Category>, CategoryModel as ModelStatic);
+  } catch (error) {
+    throw handleErrorFunction(error);
+  }
+
+  return updateModel({
+    model: CategoryModel,
+    data: category,
+    where: { id: category.id },
+  });
+};

@@ -124,3 +124,4 @@ const getAllTypeKeyObject = <T extends {}>(obj: T) => {
 
 	return allKeys;
 };
+
