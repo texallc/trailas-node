@@ -13,6 +13,8 @@ const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
 const host = process.env.DB_HOST;
 const port = Number(process.env.DB_PORT || 5432);
+const ca = process.env.DB_CA || "";
+const env = process.env.NODE_ENV!.replace(/\\n/g, '\n');
 
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
@@ -22,6 +24,12 @@ const sequelize = new Sequelize({
   host,
   port,
   models: [CategoryModel, ProductModel, InventoryModel, MovementModel, UserModel, SaleModel, SaleDetailsModel],
+  ssl: env === "dev"
+    ? undefined
+    : {
+      ca,
+      rejectUnauthorized: false,
+    }
 });
 
 export default sequelize;
