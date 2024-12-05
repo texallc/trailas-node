@@ -52,8 +52,8 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @Default("")
   declare description: string;
 
-  @Attribute(DataTypes.STRING)
-  @Len(stringLength)
+  @Attribute(DataTypes.TEXT)
+  @Len(stringLargeLength)
   @Default("https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fprofiles%2Fprofile-user-icon-isolated-on-white-background-eps10-free-vector.jpg?alt=media&token=2f3c8ccc-6c20-4a83-81d6-8bb28b7ac167")
   declare image: string;
 
