@@ -32,8 +32,8 @@ class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAtt
   @Default("")
   declare description: string;
 
-  @Attribute(DataTypes.STRING)
-  @Len(stringLength)
+  @Attribute(DataTypes.TEXT)
+  @Len(stringLargeLength)
   @Default("https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fproducts%2Fno-imagen.png?alt=media&token=2f32955a-776a-453d-bc89-f66b0a78725a")
   declare image: string;
 

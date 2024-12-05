@@ -33,8 +33,8 @@ class CategoryModel extends Model<InferAttributes<CategoryModel>, InferCreationA
   @Default("")
   declare description: string;
 
-  @Attribute(DataTypes.STRING)
-  @Len(stringLength)
+  @Attribute(DataTypes.TEXT)
+  @Len(stringLargeLength)
   @Default("https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fcategories%2Fnodisponible.jpg?alt=media&token=aa35fbcc-1b02-4d38-a3a5-c76750168ba3")
   declare image: string;
 
