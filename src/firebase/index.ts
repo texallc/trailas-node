@@ -16,5 +16,7 @@ export const serviceAccount: admin.ServiceAccount = Object.freeze({
 
 const app = admin.initializeApp({ credential: cert(serviceAccount), storageBucket });
 const auth = app.auth();
+const storage = app.storage();
 
-export { app, auth };
+
+export { app, auth, storage };

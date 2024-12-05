@@ -65,3 +65,11 @@ export const typeMovementLength: Length = {
 } as const;
 
 export const filterKeys = ["pagina", "limite", "id", "name", "uid", "email", "phone", "role", "userId"];
+
+export const baseUrlStorageGoogle = "https://storage.googleapis.com/trailas-texallc.appspot.com/";
+
+export const baseImageUrls = [
+  "https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fcategories%2Fnodisponible.jpg?alt=media&token=aa35fbcc-1b02-4d38-a3a5-c76750168ba3",
+  "https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fproducts%2Fno-imagen.png?alt=media&token=2f32955a-776a-453d-bc89-f66b0a78725a",
+  "https://firebasestorage.googleapis.com/v0/b/trailas-texallc.appspot.com/o/images%2Fprofiles%2Fprofile-user-icon-isolated-on-white-background-eps10-free-vector.jpg?alt=media&token=2f3c8ccc-6c20-4a83-81d6-8bb28b7ac167"
+];

@@ -24,7 +24,7 @@ export interface PropsFindOneModel<T extends {}> {
 
 export interface PropsFindByPrimaryKeyModel<T extends {}> {
   model: ModelStatic<Model<T, T>>;
-  attributes?: FindAttributeOptions<T> | (keyof T)[];
+  attributes?: (keyof T)[];
   primaryKey: number;
   include?: Includeable | Includeable[];
   lock?: Lock | { level: Lock; of: ModelStatic<Model>; } | boolean;
