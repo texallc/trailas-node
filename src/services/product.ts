@@ -38,7 +38,7 @@ export const createProductService = async (product: Product) => {
   delete product.userIds;
 
   try {
-    await updateImage(product as Required<Product>, ProductModel as ModelStatic);
+    await updateImage(product as Required<Product>, ProductModel as ModelStatic, "products");
   } catch (error) {
     throw handleErrorFunction(error);
   }
@@ -62,7 +62,7 @@ export const createProductService = async (product: Product) => {
       }));
 
       if (product.stock) {
-        await Promise.all(newInventories.map(({ dataValues: { id, userId } }) => {
+        await Promise.all(newInventories.map(({ dataValues: { id } }) => {
           return createModel({
             model: MovementModel,
             data: {
@@ -88,7 +88,7 @@ export const createProductService = async (product: Product) => {
 
 export const updateProductService = async (product: Partial<Product>) => {
   try {
-    await updateImage(product as Required<Product>, ProductModel as ModelStatic);
+    await updateImage(product as Required<Product>, ProductModel as ModelStatic, "products");
   } catch (error) {
     throw handleErrorFunction(error);
   }

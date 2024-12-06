@@ -5,7 +5,7 @@ import { baseImageUrls, baseUrlStorageGoogle } from "../constants/constants";
 import { deleteFile } from "../repositories/firebaseStorage";
 import { handleErrorFunction } from "../utils/handleError";
 
-export const updateImage = async <T extends { id: number; image?: string; }>(data: T, model: ModelStatic<Model<T, T>>) => {
+export const updateImage = async <T extends { id: number; image?: string; }>(data: T, model: ModelStatic<Model<T, T>>, path: string) => {
   const { image, id } = data;
 
   if (!image) {
@@ -15,7 +15,7 @@ export const updateImage = async <T extends { id: number; image?: string; }>(dat
   }
 
   try {
-    data.image = await uploadImageBase64ToStorage(image, "users");
+    data.image = await uploadImageBase64ToStorage(image, path);
 
     if (!id) return;
 

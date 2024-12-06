@@ -18,7 +18,7 @@ export const paginatedListService = async ({ pagina: page, limite: limit }: Pagi
 
 export const createCategoryService = async (category: Category) => {
   try {
-    await updateImage(category as Required<Category>, CategoryModel as ModelStatic);
+    await updateImage(category as Required<Category>, CategoryModel as ModelStatic, "categories");
   } catch (error) {
     throw handleErrorFunction(error);
   }
@@ -31,7 +31,7 @@ export const createCategoryService = async (category: Category) => {
 
 export const updateCategoryService = async (category: Partial<Category>) => {
   try {
-    await updateImage(category as Required<Category>, CategoryModel as ModelStatic);
+    await updateImage(category as Required<Category>, CategoryModel as ModelStatic, "categories");
   } catch (error) {
     throw handleErrorFunction(error);
   }
