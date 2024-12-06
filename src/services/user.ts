@@ -17,7 +17,7 @@ export const paginatedListService = async ({ pagina: page, limite: limit, ...que
 
     return { list: rows.map(d => d.dataValues), total: count };
   } catch (error) {
-    throw error;
+    throw handleErrorFunction(error);
   }
 };
 
@@ -35,7 +35,7 @@ export const createUserService = async (user: User) => {
   let uid: string = "";
 
   try {
-    await updateImage(user as Required<User>, UserModel as ModelStatic);
+    await updateImage(user as Required<User>, UserModel as ModelStatic, "users");
   } catch (error) {
     throw handleErrorFunction(error);
   }
@@ -68,7 +68,7 @@ export const updateUserService = async (user: Partial<User>) => {
   let { id, email, password, uid, role } = user;
 
   try {
-    await updateImage(user as Required<User>, UserModel as ModelStatic);
+    await updateImage(user as Required<User>, UserModel as ModelStatic, "users");
   } catch (error) {
     throw handleErrorFunction(error);
   }
