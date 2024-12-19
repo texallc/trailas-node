@@ -6,7 +6,7 @@ import {
   InferCreationAttributes,
   NonAttribute
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, AutoIncrement, Table, NotNull, BelongsTo, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, AutoIncrement, Table, NotNull, BelongsTo, HasMany, Default } from '@sequelize/core/decorators-legacy';
 import { Max, Min } from '@sequelize/validator.js';
 import { maxStock, minStock } from '../constants/constants';
 import { Inventory } from '../interfaces/inventory';
@@ -30,6 +30,10 @@ class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreatio
   @Attribute(DataTypes.INTEGER)
   @NotNull
   declare productId: number;
+
+  @Attribute(DataTypes.BOOLEAN)
+  @Default(true)
+  declare active: boolean;
 
   @BelongsTo(() => ProductModel, 'productId')
   declare product: NonAttribute<ProductModel>;

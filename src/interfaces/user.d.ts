@@ -1,4 +1,4 @@
-import { NonAttribute } from '@sequelize/core';
+import { NonAttribute, OpTypes, Where } from '@sequelize/core';
 import InventoryModel from "../models/inventory";
 import MovementModel from "../models/movement";
 import SaleModel from "../models/sale";
@@ -18,9 +18,13 @@ export interface User {
   image: string;
   password?: string;
   rfc: string;
-  phone: number;
+  phone: string;
   inventories?: Inventory[] | NonAttribute<InventoryModel[]>;
   movements?: Movement[] | NonAttribute<MovementModel[]>;
   salesSeller?: Sale[] | NonAttribute<SaleModel[]>;
   salesBuyer?: Sale[] | NonAttribute<SaleModel[]>;
+}
+
+export interface UserQuery extends Omit<User, "role"> {
+  role: Roles | Roles[];
 }

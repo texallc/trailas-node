@@ -7,7 +7,7 @@ import { Cart } from "../interfaces/cart";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<Sale>(req.query);
+    const query = clearSearchQuery<Sale>(req.query, ["sellerId", "startCreatedAt", "endCreatedAt"]);
 
     const { list, total } = await paginatedListService(query);
 

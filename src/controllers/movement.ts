@@ -6,7 +6,19 @@ import { Movement } from "../interfaces/movement";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<Movement>(req.query);
+    const query = clearSearchQuery<Movement>(
+      req.query,
+      [
+        "productName",
+        "productPartNumber",
+        "productDescription",
+        "typeMovement",
+        "branchOfficeId",
+        "userId",
+        "startCreatedAt",
+        "endCreatedAt"
+      ]
+    );
 
     const { list, total } = await paginatedListService(query);
 

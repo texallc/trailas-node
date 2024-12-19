@@ -1,12 +1,42 @@
 import { RequestHandler } from "express";
 import handleError from "../utils/handleError";
 import { createUserService, getByUidService, paginatedListService, updateUserOnlyBdService, updateUserService } from "../services/user";
-import { User } from "../interfaces/user";
+import { User, UserQuery } from "../interfaces/user";
 import { clearSearchQuery } from "../utils/functions";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<User>(req.query);
+    const query = clearSearchQuery<User>(req.query, ["name", "email", "role", "phone"]);
+
+    const { list, total } = await paginatedListService(query);
+
+    res.status(200).json({ list, total });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+export const paginatedListAdmins: RequestHandler = async (req, res) => {
+  try {
+    const query = clearSearchQuery<UserQuery>(req.query, ["name", "email"]);
+
+    query.role = ["Super Admin", "Administrador de Sucursal"];
+    query.attributes = ["id", "name", "email"];
+
+    const { list, total } = await paginatedListService(query);
+
+    res.status(200).json({ list, total });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+export const paginatedListSellers: RequestHandler = async (req, res) => {
+  try {
+    const query = clearSearchQuery<UserQuery>(req.query, ["name", "email"]);
+
+    query.role = ["Super Admin", "Administrador de Sucursal", "Vendedor"];
+    query.attributes = ["id", "name", "email"];
 
     const { list, total } = await paginatedListService(query);
 
@@ -18,7 +48,7 @@ export const paginatedList: RequestHandler = async (req, res) => {
 
 export const getByUid: RequestHandler = async (req, res) => {
   try {
-    const { uid } = clearSearchQuery<User>(req.query);
+    const { uid } = clearSearchQuery<User>(req.query, ["uid"]);
 
     const user = await getByUidService(uid!);
 

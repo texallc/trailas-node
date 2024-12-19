@@ -6,7 +6,7 @@ import { Product } from "../interfaces/product";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<Product>(req.query);
+    const query = clearSearchQuery<Product>(req.query, ["name", "categoryId", "partNumber", "description"]);
 
     const { list, total } = await paginatedListService(query);
 

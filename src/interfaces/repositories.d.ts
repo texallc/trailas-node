@@ -3,6 +3,7 @@ import { FindAttributeOptions, ModelStatic, Model, WhereOptions, Includeable, Or
 export interface PropsCreateModel<T extends {}> {
   model: ModelStatic<Model<T, T>>;
   data: T;
+  where?: WhereOptions<T>;
   transaction?: Transaction;
 }
 
@@ -39,6 +40,7 @@ export interface PropsGetAllModel<T extends {}> {
   order?: Order;
   limit?: number;
   page?: number;
+  distinct?: boolean;
 }
 
 export interface PropsBulkCreate<T extends {}> {

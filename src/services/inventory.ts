@@ -5,23 +5,68 @@ import { PaginatedListServiceProps } from "../types/services";
 import ProductModel from "../models/product";
 import sequelize from "../sequelize";
 import MovementModel from "../models/movement";
+import { getClearWhere } from "../utils/functions";
+import UserModel from "../models/user";
+import { Op } from "@sequelize/core";
+import { Product } from "../interfaces/product";
+import CategoryModel from "../models/category";
 
-export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Inventory>) => {
+export const paginatedListService = async (
+  {
+    pagina: page,
+    limite: limit,
+    userId,
+    productName,
+    productPartNumber,
+    productDescription
+  }: PaginatedListServiceProps<Inventory>
+) => {
+  const where = getClearWhere<Inventory>({ userId });
+  const whereProduct = getClearWhere<Product>({
+    name: { [Op.iLike]: productName ? `%${productName}%` : "" },
+    partNumber: { [Op.iLike]: productPartNumber ? `%${productPartNumber}%` : "" },
+    description: { [Op.iLike]: productDescription ? `%${productDescription}%` : "" },
+  });
+
   try {
-    const { count, rows } = await findAndCountModel({
-      model: InventoryModel, page, limit, include: ["product", "user"]
+    const { list, total } = await findAndCountModel({
+      model: InventoryModel,
+      where,
+      page,
+      limit,
+      include: [
+        {
+          model: ProductModel,
+          as: "product",
+          attributes: ["id", "name", "partNumber", "description"],
+          where: whereProduct
+        },
+        {
+          model: UserModel,
+          as: "user",
+          attributes: ["id", "name", "email"]
+        }
+      ]
     });
 
-    return { list: rows.map(d => d.dataValues), total: count };
+    return { list, total };
   } catch (error) {
     throw error;
   }
 };
 
-export const paginatedListBranchOfficeService = async ({ pagina: page, limite: limit, userId }: PaginatedListServiceProps<Inventory>) => {
+export const paginatedListBranchOfficeService = async ({ pagina: page, limite: limit, ...inventory }: PaginatedListServiceProps<Inventory>) => {
+  const { userId, productName, productPartNumber, productDescription } = inventory;
+  const where = getClearWhere<Inventory>({ userId });
+  const whereProduct = getClearWhere<Product>({
+    name: { [Op.iLike]: productName ? `%${productName}%` : "" },
+    partNumber: { [Op.iLike]: productPartNumber ? `%${productPartNumber}%` : "" },
+    description: { [Op.iLike]: productDescription ? `%${productDescription}%` : "" },
+  });
+
   try {
-    const { count, rows } = await findAndCountModel({
-      where: { userId },
+    const { list, total } = await findAndCountModel({
+      where,
       model: InventoryModel,
       page,
       limit,
@@ -29,13 +74,23 @@ export const paginatedListBranchOfficeService = async ({ pagina: page, limite: l
         {
           model: ProductModel,
           as: "product",
-          include: "category"
+          where: whereProduct,
+          attributes: ["id", "name", "partNumber", "description"],
+          include: {
+            model: CategoryModel,
+            as: "category",
+            attributes: ["id", "name"]
+          }
         },
-        "user"
+        {
+          model: UserModel,
+          as: "user",
+          attributes: ["id"]
+        }
       ]
     });
 
-    return { list: rows.map(d => d.dataValues), total: count };
+    return { list, total };
   } catch (error) {
     throw error;
   }
@@ -44,6 +99,7 @@ export const paginatedListBranchOfficeService = async ({ pagina: page, limite: l
 export const updateInventoryService = async (inventory: Partial<Inventory>) => {
   const transaction = await sequelize.startUnmanagedTransaction();
   const addStock = inventory.addStock!;
+  const userId = global.user?.id!;
 
   try {
     const updateInventoryPromise = incrementModel({
@@ -54,12 +110,11 @@ export const updateInventoryService = async (inventory: Partial<Inventory>) => {
       transaction
     });
 
-
     const updateMovementPromise = createModel({
       model: MovementModel,
       data: {
         inventoryId: inventory.id!,
-        userId: inventory.userId!,
+        userId,
         quantity: Math.abs(addStock),
         typeMovement: addStock > 0 ? "Entrada" : "Salida"
       },

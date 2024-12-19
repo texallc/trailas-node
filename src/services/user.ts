@@ -1,21 +1,28 @@
 import { createModel, findAndCountModel, findOneModel, updateModel } from "../repositories";
 import UserModel from "../models/user";
-import { User } from "../interfaces/user";
+import { User, UserQuery } from "../interfaces/user";
 import { createUserAuth, deleteUserAuth, getUserAuthByUid, updateUserAuth } from "../repositories/firebaseAuth";
 import { handleErrorFunction } from "../utils/handleError";
 import sequelize from "../sequelize";
 import { PaginatedListServiceProps } from "../types/services";
 import { getClearWhere } from "../utils/functions";
 import { updateImage } from ".";
-import { ModelStatic } from "@sequelize/core";
+import { ModelStatic, Op } from "@sequelize/core";
 
-export const paginatedListService = async ({ pagina: page, limite: limit, ...query }: PaginatedListServiceProps<User>) => {
+export const paginatedListService = async ({ pagina: page, limite: limit, attributes, ...user }: PaginatedListServiceProps<UserQuery>) => {
+  const { name, email, role, phone } = user;
+
+  const where = getClearWhere<User>({
+    name: { [Op.iLike]: name ? `%${name}%` : "" },
+    email: { [Op.iLike]: email ? `%${email}%` : "" },
+    phone: { [Op.like]: phone ? `%${phone}%` : "" },
+    role,
+  });
+
   try {
-    const where = getClearWhere(query);
+    const { list, total } = await findAndCountModel<User>({ model: UserModel, where, page, limit, attributes });
 
-    const { count, rows } = await findAndCountModel({ model: UserModel, where, page, limit });
-
-    return { list: rows.map(d => d.dataValues), total: count };
+    return { list, total };
   } catch (error) {
     throw handleErrorFunction(error);
   }

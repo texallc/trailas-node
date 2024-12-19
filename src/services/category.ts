@@ -1,16 +1,23 @@
-import { ModelStatic } from "@sequelize/core";
+import { ModelStatic, Op } from "@sequelize/core";
 import { updateImage } from ".";
 import { Category } from "../interfaces/category";
 import CategoryModel from "../models/category";
 import { createModel, findAndCountModel, updateModel } from "../repositories";
 import { PaginatedListServiceProps } from "../types/services";
 import { handleErrorFunction } from "../utils/handleError";
+import { getClearWhere } from "../utils/functions";
 
-export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Category>) => {
+export const paginatedListService = async ({ pagina: page, limite: limit, ...category }: PaginatedListServiceProps<Category>) => {
+  const { name, description } = category;
+  const where = getClearWhere<Category>({
+    name: { [Op.iLike]: name ? `%${name}%` : "" },
+    description: { [Op.iLike]: description ? `%${description}%` : "" }
+  });
+
   try {
-    const { count, rows } = await findAndCountModel({ model: CategoryModel, page, limit });
+    const { list, total } = await findAndCountModel({ model: CategoryModel, where, page, limit });
 
-    return { list: rows.map(d => d.dataValues), total: count };
+    return { list, total };
   } catch (error) {
     throw error;
   }
