@@ -10,8 +10,12 @@ export interface Inventory {
   createdAt?: Date;
   updatedAt?: Date;
   productId: number;
-  product: Product | NonAttribute<ProductModel>;
-  user: User | NonAttribute<UserModel>;
+  product?: Product | NonAttribute<ProductModel>;
+  user?: User | NonAttribute<UserModel>;
   userId: number;
   addStock?: number;
+  active: boolean;
+  productName?: string;
+  productPartNumber?: string;
+  productDescription?: string;
 }

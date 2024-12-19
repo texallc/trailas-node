@@ -1,6 +1,6 @@
 import { handleErrorFunction } from "./handleError";
 import sharp from "sharp";
-import { filterKeys } from "../constants/constants";
+import { baseFilterKeys } from "../constants/constants";
 import { PaginatedListServiceProps } from "../types/services";
 import { ParsedQs } from "qs";
 import { Op, WhereOptions } from "@sequelize/core";
@@ -41,16 +41,34 @@ export const fileToBuffer = async (blob: Blob) => {
 		throw handleErrorFunction(error);
 	}
 };
-export const clearSearchQuery = <T extends {}>(query: ParsedQs) => {
+export const clearSearchQuery = <T extends {}>(query: ParsedQs, filterKeys?: (keyof T)[]) => {
 	const queryEntries = Object.entries(query);
+	let newQuery: PaginatedListServiceProps<T> = {} as PaginatedListServiceProps<T>;
 
 	for (const [key, value] of queryEntries) {
-		if (value === "" || !filterKeys.includes(key)) {
+		const k = key as keyof T;
+
+		if (["pagina", "limite", "categoryId", "userId", "sellerId", "buyerId"].includes(key) && value) {
+			const _value = parseInt(value?.toString());
+			const isValidNumber = isFinite(_value);
+
+			if (!isValidNumber) {
+				throw handleErrorFunction("Filtros inválidos.");
+			}
+
+			newQuery = { ...newQuery, [k]: _value };
+
+			continue;
+		}
+
+		if (!value || ![...baseFilterKeys, ...(filterKeys || []) as string[]].includes(key)) {
 			throw handleErrorFunction("Filtros inválidos.");
 		}
+
+		newQuery = { ...newQuery, [k]: value };
 	}
 
-	return query as unknown as PaginatedListServiceProps<T>;
+	return newQuery;
 };
 
 export const getClearWhere = <T extends {}>(where: WhereOptions<T>) => {

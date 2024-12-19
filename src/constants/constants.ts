@@ -64,7 +64,7 @@ export const typeMovementLength: Length = {
   msg: "Los caracteres permitidos son inválidos."
 } as const;
 
-export const filterKeys = ["pagina", "limite", "id", "name", "uid", "email", "phone", "role", "userId"];
+export const baseFilterKeys = ["pagina", "limite"];
 
 export const baseUrlStorageGoogle = "https://storage.googleapis.com/trailas-texallc.appspot.com/";
 

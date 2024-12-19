@@ -6,7 +6,7 @@ import { Inventory } from "../interfaces/inventory";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<Inventory>(req.query);
+    const query = clearSearchQuery<Inventory>(req.query, ["userId", "productName", "productPartNumber", "productDescription"]);
 
     const { list, total } = await paginatedListService(query);
 
@@ -18,7 +18,7 @@ export const paginatedList: RequestHandler = async (req, res) => {
 
 export const paginatedListBranchOffice: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<Inventory>(req.query);
+    const query = clearSearchQuery<Inventory>(req.query, ["userId", "productName", "productPartNumber", "productDescription"]);
 
     if (!query.userId) {
       res.status(400).json({ message: "La sucursal es requerida." });

@@ -4,8 +4,9 @@ import UserModel from "../models/user";
 import { TypeMovement } from "../types";
 import { Inventory } from "./inventory";
 import { User } from "./user";
+import { QueryDates } from ".";
 
-export interface Movement {
+export interface Movement extends QueryDates {
   readonly id?: number;
   quantity: number;
   createdAt?: Date;
@@ -14,4 +15,8 @@ export interface Movement {
   user?: User | NonAttribute<UserModel>;
   userId: number;
   typeMovement: TypeMovement;
+  productName?: string;
+  productPartNumber?: string;
+  productDescription?: string;
+  branchOfficeId?: number;
 }

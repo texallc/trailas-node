@@ -6,7 +6,7 @@ import { clearSearchQuery } from "../utils/functions";
 
 export const paginatedList: RequestHandler = async (req, res) => {
   try {
-    const query = clearSearchQuery<Category>(req.query);
+    const query = clearSearchQuery<Category>(req.query, ["name", "description"]);
 
     const { list, total } = await paginatedListService(query);
 

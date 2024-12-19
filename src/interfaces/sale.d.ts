@@ -4,8 +4,9 @@ import UserModel from "../models/user";
 import { SalesDetail } from "./saleDetails";
 import { User } from "./user";
 import { Status } from "../types";
+import { QueryDates } from ".";
 
-export interface Sale {
+export interface Sale extends QueryDates {
   readonly id?: number;
   total: number;
   subtotal: number;

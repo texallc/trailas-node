@@ -12,27 +12,37 @@ import UserModel from "../models/user";
 import { bulkCreate, createModel, findAndCountModel, findOneModel, incrementModel } from "../repositories";
 import sequelize from "../sequelize";
 import { PaginatedListServiceProps } from "../types/services";
+import { getClearWhere } from "../utils/functions";
 import { handleErrorFunction } from "../utils/handleError";
-import { Lock } from "@sequelize/core";
+import { Lock, Op } from "@sequelize/core";
 
-export const paginatedListService = async ({ pagina: page, limite: limit }: PaginatedListServiceProps<Sale>) => {
+export const paginatedListService = async ({ pagina: page, limite: limit, ...sale }: PaginatedListServiceProps<Sale>) => {
+  const { sellerId, startCreatedAt, endCreatedAt } = sale;
+  const where = getClearWhere<Sale>({
+    sellerId,
+    createdAt: {
+      [Op.gte]: startCreatedAt,
+      [Op.lte]: endCreatedAt
+    }
+  });
+
   try {
-    //cambiar el order by opr el id ya que esta indexado.
-    const { count, rows } = await findAndCountModel({
+    const { list, total } = await findAndCountModel({
       model: SaleModel,
+      where,
       page,
       limit,
-      order: [["createdAt", "DESC"]],
+      distinct: true,
       include: [
         {
           model: UserModel,
           as: "buyer",
-          attributes: ["id", "name", "email"]
+          attributes: ["id", "name", "email"],
         },
         {
           model: UserModel,
           as: "seller",
-          attributes: ["id", "name", "email"]
+          attributes: ["id", "name", "email"],
         },
         {
           model: SaleDetailsModel,
@@ -46,7 +56,7 @@ export const paginatedListService = async ({ pagina: page, limite: limit }: Pagi
       ],
     });
 
-    return { list: rows.map(d => d.dataValues), total: count };
+    return { list, total };
   } catch (error) {
     throw handleErrorFunction(error);
   }
@@ -107,7 +117,7 @@ export const createSaleService = async ({ taxes, discount, subtotal, total, prod
         lock: Lock.UPDATE
       }))?.dataValues;
 
-      if (!inventory) {
+      if (!inventory || !inventory.active) {
         throw new Error(`Inventario del producto: ${p.productId} no encontrado`);
       }
 

@@ -14,6 +14,12 @@ export const findOneModel = <T extends {}>({ model, where, include, attributes, 
   transaction
 });
 
+export const findOrCreateModel = <T extends {}>({ model, data, where, transaction }: PropsCreateModel<T>) => model.findOrCreate({
+  where,
+  defaults: data,
+  transaction
+});
+
 export const findByPrimaryKeyModel = <T extends {}>({ model, primaryKey, include, attributes, transaction }: PropsFindByPrimaryKeyModel<T>) => model.findByPk(primaryKey, {
   attributes: attributes as FindAttributeOptions<T>,
   include,
@@ -29,14 +35,28 @@ export const findAllModel = <T extends {}>({ model, where, include, attributes, 
   limit: limit || 10
 });
 
-export const findAndCountModel = <T extends {}>({ model, where, include, attributes, order, limit, page }: PropsGetAllModel<T>) => model.findAndCountAll({
-  where,
-  attributes: attributes as FindAttributeOptions<T>,
-  include,
-  offset: typeof page === "undefined" ? page : (page - 1) * (limit || 10),
-  order: order || [['id', 'DESC']],
-  limit: limit || 10
-});
+export const findAndCountModel = async <T extends {}>({ model, where, include, attributes, order, limit, page, distinct }: PropsGetAllModel<T>) => {
+  try {
+    const paginationModelPromise = model.findAll({
+      attributes: attributes as FindAttributeOptions<T>,
+      where,
+      limit,
+      offset: typeof page === "undefined" ? page : (page - 1) * (limit || 10),
+      include,
+      order: order || [['id', 'DESC']],
+    });
+    const totalModelPromise = model.count({ where, include, distinct });
+
+    const [paginationModel, total] = await Promise.all([paginationModelPromise, totalModelPromise]);
+
+    return {
+      total,
+      list: paginationModel.map(r => r.dataValues)
+    };
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const bulkCreate = async <T extends {}>({ model, data, updateOnDuplicate, transaction }: PropsBulkCreate<T>) => {
   try {

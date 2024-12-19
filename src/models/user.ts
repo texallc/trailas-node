@@ -42,10 +42,9 @@ class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttribute
   @NotNull
   declare name: string;
 
-  @Attribute(DataTypes.BIGINT)
+  @Attribute(DataTypes.STRING)
   @Len(phoneLength)
-  @Default(0)
-  declare phone: number;
+  declare phone: string;
 
   @Attribute(DataTypes.TEXT)
   @Len(stringLargeLength)
